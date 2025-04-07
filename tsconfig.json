@@ -4,10 +4,10 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/artist-management-system-api-e2e"
+      "path": "./apps/artist-management-system-api"
     },
     {
-      "path": "./apps/artist-management-system-api"
+      "path": "./apps/artist-management-system-enduser"
     }
   ]
 }
