@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/artist-management-system-api-e2e"
+    },
+    {
+      "path": "./apps/artist-management-system-api"
+    }
+  ]
+}

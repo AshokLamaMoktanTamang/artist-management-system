@@ -1,0 +1,51 @@
+{
+  "name": "@artist-management-system/artist-management-system-api",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "artist-management-system-api",
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "webpack-cli build",
+          "args": [
+            "node-env=production"
+          ]
+        },
+        "configurations": {
+          "development": {
+            "args": [
+              "node-env=development"
+            ]
+          }
+        }
+      },
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "artist-management-system-api:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "artist-management-system-api:build:development"
+          },
+          "production": {
+            "buildTarget": "artist-management-system-api:build:production"
+          }
+        }
+      },
+      "docker-build": {
+        "dependsOn": [
+          "build"
+        ],
+        "command": "docker build -f apps/artist-management-system-api/Dockerfile . -t artist-management-system-api"
+      }
+    }
+  }
+}
