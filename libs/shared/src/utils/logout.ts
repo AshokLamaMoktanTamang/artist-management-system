@@ -1,7 +1,7 @@
-import { removeItem } from './storage'
+import { removeItem } from './storage';
 
 export default () => {
-  removeItem('token')
-  removeItem('refresh-token')
-  window.location.replace('/login')
-}
+  removeItem('token');
+  removeItem('refresh-token');
+  window.location.replace('/login');
+};

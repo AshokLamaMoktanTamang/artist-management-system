@@ -17,7 +17,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const responseMessage = this.reflector.get<string>(
       ResponseMessageKey,
-      context.getHandler(),
+      context.getHandler()
     );
     return next.handle().pipe(
       map((data) => {
@@ -43,7 +43,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
           ...baseResponse,
           data,
         };
-      }),
+      })
     );
   }
 }
