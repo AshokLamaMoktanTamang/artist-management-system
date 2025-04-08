@@ -8,6 +8,9 @@
     },
     {
       "path": "./apps/artist-management-system-enduser"
+    },
+    {
+      "path": "./libs/shared"
     }
   ]
 }

@@ -1,15 +1,15 @@
-import NxWelcome from './nx-welcome';
-
+import { useEffect } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 
+import { axios } from '@shared/index';
+
 export function App() {
+  useEffect(() => {
+    axios.get('http://localhost:3000/health');
+  }, []);
+
   return (
     <div>
-      <NxWelcome title="@artist-management-system/artist-management-system-enduser" />
-
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
       <br />
       <hr />
       <br />
