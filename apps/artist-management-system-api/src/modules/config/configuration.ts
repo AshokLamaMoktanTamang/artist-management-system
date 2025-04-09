@@ -9,6 +9,10 @@ export default () => {
     DATABASE_USER_NAME: str({ desc: 'Database username is required' }),
     DATABASE_NAME: str({ desc: 'Database name is required' }),
     DATABASE_PASSWORD: str({ default: '' }),
+    PASETO_PUBLIC_KEY: str({ desc: 'Paseto public key is required' }),
+    PASETO_PRIVATE_KEY: str({ desc: 'Paseto private key is required' }),
+    PASETO_TOKEN_ISSUER: str({ default: 'AMS' }),
+    PASETO_TOKEN_AUDIENCE: str({ default: 'AMS-Enduser' }),
   });
 
   return {
@@ -24,6 +28,12 @@ export default () => {
       user: env.DATABASE_USER_NAME,
       password: env.DATABASE_PASSWORD,
       name: env.DATABASE_NAME,
+    },
+    paseto: {
+      publicKey: env.PASETO_PUBLIC_KEY,
+      privateKey: env.PASETO_PRIVATE_KEY,
+      issuer: env.PASETO_TOKEN_ISSUER,
+      audience: env.PASETO_TOKEN_AUDIENCE,
     },
   };
 };

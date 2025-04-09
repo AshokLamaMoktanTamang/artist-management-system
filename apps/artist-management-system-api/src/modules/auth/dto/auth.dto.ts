@@ -1,6 +1,7 @@
 import { passwordValidationRegex } from '@/common/constants/reges.constant';
 import { UserEntity } from '@/modules/users/entity/user.entity';
 import { USER_GENDER, USER_ROLE } from '@/modules/users/interfaces';
+import { PickType } from '@nestjs/swagger';
 import {
   IsDate,
   IsEmail,
@@ -43,3 +44,9 @@ export class SignupDto implements UserEntity {
   @IsEnum(USER_GENDER)
   gender!: USER_GENDER;
 }
+
+export class LoginDto extends PickType(SignupDto, [
+  'email',
+  'password',
+  'role',
+]) {}

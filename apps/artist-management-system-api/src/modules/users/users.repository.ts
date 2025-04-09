@@ -3,7 +3,7 @@ import { User, userTable } from './entity/user.entity';
 import { DatabaseService } from '../database/database.service';
 import { BaseRepository } from '@/common/repositories/base.repository';
 import { userIndexes, userSchema } from './entity/user.schema';
-import { hashPassword } from '@/utils/hash';
+import { hashPassword } from '@/utils/bcrypt';
 
 @Injectable()
 export class UsersRepository extends BaseRepository<User> {
