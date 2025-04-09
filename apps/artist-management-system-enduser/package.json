@@ -1,5 +1,6 @@
 {
   "name": "@artist-management-system/artist-management-system-enduser",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "type": "module"
 }
