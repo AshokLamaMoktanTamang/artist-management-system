@@ -12,7 +12,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateUserDto implements UserEntity {
+export class SignupDto implements UserEntity {
   @MaxLength(150)
   @IsString()
   @IsNotEmpty()
@@ -31,7 +31,7 @@ export class CreateUserDto implements UserEntity {
   })
   password!: string;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber('NP')
   phone!: string;
 
   @IsDate()

@@ -1,22 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { USER_GENDER, USER_ROLE } from '../users/interfaces';
+import { SignupDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
-  async registerUser() {
-    // return this.usersService.create({
-    //   email: 'ashok.lama+kq@innovatetech.co',
-    //   dob: new Date(),
-    //   first_name: 'Ashok',
-    //   last_name: 'Lama',
-    //   gender: USER_GENDER.MALE,
-    //   password: '1234',
-    //   phone: '+977 98989898',
-    //   role: USER_ROLE.SUPER_ADMIN,
-    // });
-    return this.usersService.deleteById('20fbc061-689d-4c42-9016-b936c1c04df0')
+  async registerUser(data: SignupDto) {
+    const { email, role } = data;
+    const existingUser = await this.usersService.findOne({ email, role });
+
+    if (existingUser)
+      throw new ConflictException('User with role already exist');
+
+    return this.usersService.create(data);
   }
 }

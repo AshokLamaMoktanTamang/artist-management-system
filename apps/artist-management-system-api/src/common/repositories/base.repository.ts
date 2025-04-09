@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { DatabaseService } from '@/modules/database/database.service';
 import { QueryOptions } from './type';
@@ -8,12 +8,22 @@ export class BaseRepository<T extends { id: string }> {
   private readonly logger = new Logger(BaseRepository.name);
 
   constructor(
-    private readonly db: DatabaseService,
-    private readonly table: string,
+    protected readonly db: DatabaseService,
+    protected readonly table: string,
     protected readonly schema: Record<string, string>,
-    private readonly softDelete = false
+    protected readonly softDelete = false,
+    protected readonly indexes: string[] = [],
+    protected readonly preSaveHook?: (
+      data: Partial<Omit<T, 'id'>>
+    ) => Promise<Partial<Omit<T, 'id'>>>
   ) {
     this.initTable();
+  }
+
+  private async processBeforeSave(
+    data: Partial<Omit<T, 'id'>>
+  ): Promise<Partial<Omit<T, 'id'>>> {
+    return this.preSaveHook ? await this.preSaveHook(data) : data;
   }
 
   private async initTable() {
@@ -22,24 +32,32 @@ export class BaseRepository<T extends { id: string }> {
       await this.createTable();
       this.logger.log(`Table created --> ${this.table}`);
     }
+
+    for (const indexQuery of this.indexes) {
+      await this.db.query(indexQuery);
+      this.logger.log(`Indexes created for --> ${this.table}`);
+    }
   }
 
   private async tableExists(): Promise<boolean> {
-    const query = `
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' AND table_name = $1
-      );
-    `;
-    const result = await this.db.query(query, [this.table]);
-    return result[0]?.exists ?? false;
+    const result = await this.db.query(
+      `SELECT EXISTS (
+         SELECT FROM information_schema.tables 
+         WHERE table_schema = 'public' 
+         AND table_name = $1
+       ) AS "exists"`,
+      [this.table]
+    );
+
+    return result?.[0]?.exists === true;
   }
 
   private async createTable() {
     const columns = Object.entries(this.schema)
-      .map(([key, type]) => `${key} ${type}`)
+      .map(([column, type]) => `"${column}" ${type}`)
       .join(', ');
-    const query = `CREATE TABLE ${this.table} (${columns});`;
+
+    const query = `CREATE TABLE IF NOT EXISTS "${this.table}" (${columns});`;
     await this.db.query(query);
   }
 
@@ -89,8 +107,10 @@ export class BaseRepository<T extends { id: string }> {
   }
 
   async create(data: Omit<T, 'id'>): Promise<T> {
-    const keys = Object.keys(data);
-    const values = Object.values(data);
+    const processed = await this.processBeforeSave(data);
+
+    const keys = Object.keys(processed);
+    const values = Object.values(processed);
     const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
     const query = `INSERT INTO ${this.table} (${keys.join(
       ', '
@@ -99,7 +119,9 @@ export class BaseRepository<T extends { id: string }> {
     return result[0];
   }
 
-  async updateById(id: string, updates: Partial<T>): Promise<T> {
+  async updateById(id: string, unprocessedUpdates: Partial<T>): Promise<T> {
+    const updates = await this.processBeforeSave(unprocessedUpdates);
+    
     const keys = Object.keys(updates);
     const values = Object.values(updates);
     const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ');
@@ -109,6 +131,10 @@ export class BaseRepository<T extends { id: string }> {
   }
 
   async deleteById(id: string): Promise<T> {
+    const row = await this.findById(id);
+
+    if (!row) throw new NotFoundException('Data not found');
+
     if (this.softDelete) {
       const query = `UPDATE ${this.table} SET deleted = true, deleted_at = NOW() WHERE id = $1 RETURNING *`;
       const result = await this.db.query(query, [id]);
