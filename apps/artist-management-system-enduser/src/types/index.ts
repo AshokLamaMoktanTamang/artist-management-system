@@ -8,5 +8,11 @@ export interface HookInputBaseProps {
   ) => ValidateResult | Promise<ValidateResult>;
   name: string;
   label?: ReactNode;
-  description?: ReactNode
+  description?: ReactNode;
+}
+
+export enum USER_ROLE {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ARTIST_MANAGER = 'ARTIST_MANAGER',
+  ARTIST = 'ARTIST',
 }

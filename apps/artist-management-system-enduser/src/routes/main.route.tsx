@@ -7,7 +7,8 @@ import { getItem } from '@shared/index';
 import { PRIVATE_ROUTES, PUBLIC_ROUTES } from '@/utils/constants';
 import { authLayoutRoutes, staticLayoutRoutes } from './public.route';
 import ErrorBoundary from '@shared/components/ErrorBoundary';
-import { AuthLayout, StaticLayout } from '@/layouts';
+import { AuthLayout, FullLayout, StaticLayout } from '@/layouts';
+import { fullLayoutRoutes } from './private.route';
 
 const RouteWrapperComponent = (routeType: RouteType, component: any) => {
   const ComponentWrapped = component;
@@ -63,6 +64,11 @@ const Routes = createBrowserRouter([
     element: <StaticLayout />,
     errorElement: <ErrorBoundary homeRoutePath="home" />,
     children: ChildrenMapper(RouteType.PUBLIC, staticLayoutRoutes),
+  },
+  {
+    element: <FullLayout />,
+    errorElement: <ErrorBoundary homeRoutePath="home" />,
+    children: ChildrenMapper(RouteType.PRIVATE, fullLayoutRoutes),
   },
 ]);
 

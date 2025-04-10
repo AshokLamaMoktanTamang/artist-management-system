@@ -51,7 +51,7 @@ const HookInput = React.forwardRef<
               {...field}
               ref={ref}
               value={value || ''}
-              onChange={(e) => onChange(e)}
+              onChange={({ target: { value } }) => onChange(value)}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}

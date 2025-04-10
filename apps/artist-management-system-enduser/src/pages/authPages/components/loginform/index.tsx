@@ -7,16 +7,25 @@ import { ComponentProps, FC, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormContext } from 'react-hook-form';
 import PlaceholderImage from '@/assets/images/auth.png';
-import { PUBLIC_ROUTES } from '@/utils/constants';
+import { PUBLIC_ROUTES, SELECT_ROLE_OPTIONS } from '@/utils/constants';
+import { HookSelect } from '@/components/select';
+import { USER_ROLE } from '@/types';
+import { useLoginMutation } from '@/store/slices/auth.slice';
+import { LoginPayload } from '@/store/types';
+import useAuth from '@/hooks/useAuth';
 
 const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
   const {
     formState: { isDirty },
-  } = useFormContext();
+  } = useFormContext<LoginPayload>();
 
-  const handleSubmit = useCallback((data: any) => {
-    console.log(data);
-  }, []);
+  const { loginHandler } = useAuth();
+  const [handleLogin, { isLoading }] = useLoginMutation();
+
+  const handleSubmit = useCallback(
+    (data: LoginPayload) => handleLogin(data).unwrap().then(loginHandler),
+    []
+  );
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...rest}>
@@ -30,6 +39,13 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
                   Login to your account
                 </p>
               </div>
+              <HookSelect
+                name="role"
+                required
+                label="I am"
+                options={SELECT_ROLE_OPTIONS}
+                defaultValue={USER_ROLE.SUPER_ADMIN}
+              />
               <HookInput
                 name="email"
                 label="Email"
@@ -44,7 +60,11 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
                 label="Password"
                 placeholder="********"
               />
-              <Button disabled={!isDirty} type="submit" className="w-full">
+              <Button
+                disabled={!isDirty || isLoading}
+                type="submit"
+                className="w-full"
+              >
                 Login
               </Button>
 

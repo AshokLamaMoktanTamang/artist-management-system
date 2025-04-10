@@ -4,8 +4,10 @@ import * as ReactDOM from 'react-dom/client';
 import App from './app/app';
 import { ToastContainer } from 'react-toastify';
 
-import './styles.scss'
-import './index.css'
+import './styles.scss';
+import './index.css';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,7 +15,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
     <ToastContainer
       position="top-right"
       hideProgressBar={false}
