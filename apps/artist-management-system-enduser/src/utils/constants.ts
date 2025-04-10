@@ -10,6 +10,9 @@ export const PUBLIC_ROUTES = {
 
 export const PRIVATE_ROUTES = {
   home: '/home',
+  users: '/users',
+  artists: '/artists',
+  bulkUpload: '/bulk-upload',
 };
 
 export const SELECT_ROLE_OPTIONS: Array<{ label: string; value: USER_ROLE }> = [

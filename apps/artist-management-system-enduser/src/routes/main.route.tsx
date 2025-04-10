@@ -47,7 +47,11 @@ const ChildrenMapper = (
 const Routes = createBrowserRouter([
   {
     path: '',
-    errorElement: <ErrorBoundary homeRoutePath="home" />,
+    errorElement: (
+      <FullLayout>
+        <ErrorBoundary homeRoutePath="home" />
+      </FullLayout>
+    ),
     element: (
       <Navigate
         to={token ? PRIVATE_ROUTES.home : PUBLIC_ROUTES.login}
@@ -67,7 +71,11 @@ const Routes = createBrowserRouter([
   },
   {
     element: <FullLayout />,
-    errorElement: <ErrorBoundary homeRoutePath="home" />,
+    errorElement: (
+      <FullLayout>
+        <ErrorBoundary homeRoutePath="home" />
+      </FullLayout>
+    ),
     children: ChildrenMapper(RouteType.PRIVATE, fullLayoutRoutes),
   },
 ]);

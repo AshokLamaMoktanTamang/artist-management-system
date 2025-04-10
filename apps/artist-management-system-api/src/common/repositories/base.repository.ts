@@ -77,6 +77,27 @@ export class BaseRepository<T extends { id: string }> {
     return { clause, values };
   }
 
+  private buildSelectClause(select?: Partial<Record<keyof T, 0 | 1>>): string {
+    if (!select) return '*';
+
+    const included = Object.entries(select)
+      .filter(([_, v]) => v === 1)
+      .map(([k]) => `"${k}"`);
+
+    const excluded = Object.entries(select)
+      .filter(([_, v]) => v === 0)
+      .map(([k]) => k);
+
+    if (included.length > 0) return included.join(', ');
+
+    const allKeys = Object.keys(this.schema);
+    const final = allKeys
+      .filter((k) => !excluded.includes(k))
+      .map((k) => `"${k}"`);
+
+    return final.join(', ');
+  }
+
   async find(options: QueryOptions<T> = {}): Promise<T[]> {
     const {
       where = {},
@@ -95,15 +116,22 @@ export class BaseRepository<T extends { id: string }> {
     return this.db.query(query, values);
   }
 
-  async findOne(where: Partial<T>): Promise<T | null> {
+  async findOne(
+    where: Partial<T>,
+    select?: Partial<Record<keyof T, 0 | 1>>
+  ): Promise<T | null> {
+    const selectedFields = this.buildSelectClause(select);
     const { clause, values } = this.buildWhereClause(where);
-    const query = `SELECT * FROM ${this.table} ${clause} LIMIT 1`;
+    const query = `SELECT ${selectedFields} FROM ${this.table} ${clause} LIMIT 1`;
     const result = await this.db.query(query, values);
     return result[0] ?? null;
   }
 
-  async findById(id: string): Promise<T | null> {
-    return this.findOne({ id } as any);
+  async findById(
+    id: string,
+    select?: Partial<Record<keyof T, 0 | 1>>
+  ): Promise<T | null> {
+    return this.findOne({ id } as any, select);
   }
 
   async create(data: Omit<T, 'id'>): Promise<T> {
@@ -121,7 +149,7 @@ export class BaseRepository<T extends { id: string }> {
 
   async updateById(id: string, unprocessedUpdates: Partial<T>): Promise<T> {
     const updates = await this.processBeforeSave(unprocessedUpdates);
-    
+
     const keys = Object.keys(updates);
     const values = Object.values(updates);
     const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ');
