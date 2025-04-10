@@ -1,18 +1,8 @@
-import { Button } from '@/components/button';
-import { toastSuccess } from '@shared/utils/toast';
+import Routes from '@/routes/main.route';
+import { RouterProvider } from 'react-router-dom';
 
 export function App() {
-  return (
-    <div className="m-8">
-      <Button
-        onClick={() => {
-          toastSuccess('test', 'etestestestes ajscvakjcv asjhcvasjhcvashjcv');
-        }}
-      >
-        Show Toast
-      </Button>
-    </div>
-  );
+  return <RouterProvider router={Routes} />;
 }
 
 export default App;

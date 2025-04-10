@@ -1,4 +1,3 @@
-import { HookInputBaseProps } from '@/types';
 import { DetailedHTMLProps, FormHTMLAttributes, ReactNode } from 'react';
 import { FieldValues, UseFormProps } from 'react-hook-form';
 
@@ -11,7 +10,6 @@ export interface HookFormProps
 }
 
 export interface HookFormProviderProps
-  extends UseFormProps<FieldValues, Record<string, unknown>>,
-    HookInputBaseProps {
+  extends UseFormProps<FieldValues, Record<string, unknown>> {
   children?: ReactNode;
 }

@@ -10,5 +10,9 @@
     "cssVariables": true,
     "prefix": ""
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "aliases": {
+    "utils": "src/utils/*",
+    "components": "src/components/*"
+  }
 }

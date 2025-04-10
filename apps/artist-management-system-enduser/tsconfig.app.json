@@ -41,6 +41,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "../../libs/shared/src/*",
-    "../../libs/shared/src/**/*.tsx"
+    "../../libs/shared/src/**/*.tsx",
+    "../../libs/shared/src/**/*.ts"
   ]
 }

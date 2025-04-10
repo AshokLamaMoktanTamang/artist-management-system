@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { cn } from '@/utils/cn';
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { HookInputBaseProps } from '@/types';
 import {
   FormControl,
@@ -34,7 +34,7 @@ const HookInput = React.forwardRef<
   React.ComponentProps<'input'> & HookInputBaseProps
 >((props, ref) => {
   const { name, label, description, validate, required, defaultValue } = props;
-  const { control } = useForm();
+  const { control } = useFormContext();
 
   return (
     <FormField
@@ -50,8 +50,8 @@ const HookInput = React.forwardRef<
               {...props}
               {...field}
               ref={ref}
-              value={value}
-              onChange={({ target: { value } }) => onChange(value)}
+              value={value || ''}
+              onChange={(e) => onChange(e)}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
