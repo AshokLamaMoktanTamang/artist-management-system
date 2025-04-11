@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/sidebar';
+import useAuth from '@/hooks/useAuth';
 
 export function NavUser({
   user,
@@ -22,9 +23,10 @@ export function NavUser({
   user: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string;
   };
 }) {
+  const { logoutHandler } = useAuth();
   const { isMobile } = useSidebar();
 
   const avatarFallback = user.name
@@ -78,7 +80,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={logoutHandler}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

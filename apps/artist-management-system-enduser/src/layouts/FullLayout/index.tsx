@@ -6,14 +6,20 @@ import { SiteHeader } from './siteHeader';
 import useAuth from '@/hooks/useAuth';
 
 const FullLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { user, isUserLoading } = useAuth();
+  const { user, isUserLoading, logoutHandler } = useAuth();
 
-  if (isUserLoading || !user) {
+  if (isUserLoading && !user) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-lg font-semibold animate-pulse">Loading...</div>
+        <div className="hidden">{children ?? <Outlet />}</div>
       </div>
     );
+  }
+
+  if (!isUserLoading && !user) {
+    logoutHandler();
+    return;
   }
 
   return (

@@ -9,8 +9,6 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const token = getItem<string>('token');
   const location = useLocation();
 
-  console.log('Enter');
-
   if (!token) {
     return (
       <Navigate to={PUBLIC_ROUTES.login} state={{ from: location }} replace />
@@ -23,8 +21,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
 const PublicRoute: FC<RouteProps> = ({ children }) => {
   const token = getItem<string>('token');
   const location = useLocation();
-  console.log('Enter 2');
-
+  
   if (token) {
     return (
       <Navigate to={PRIVATE_ROUTES.home} state={{ from: location }} replace />

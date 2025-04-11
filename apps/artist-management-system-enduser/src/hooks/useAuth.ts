@@ -1,7 +1,8 @@
+import baseApi from '@/store/baseApi';
 import { useWhoAmIQuery } from '@/store/slices/user.slice';
 import { LoginResponse } from '@/store/types';
-import { PRIVATE_ROUTES } from '@/utils/constants';
-import { getItem, setItem } from '@shared/index';
+import { PRIVATE_ROUTES, PUBLIC_ROUTES } from '@/utils/constants';
+import { getItem, removeItem, setItem } from '@shared/index';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +25,14 @@ const useAuth = () => {
     []
   );
 
-  return { loginHandler, user, refetchUser, isUserLoading };
+  const logoutHandler = useCallback(() => {
+    removeItem('token');
+    removeItem('refresh-token');
+    baseApi.util.resetApiState();
+    window.location.replace(PUBLIC_ROUTES.login);
+  }, []);
+
+  return { loginHandler, user, refetchUser, isUserLoading, logoutHandler };
 };
 
 export default useAuth;

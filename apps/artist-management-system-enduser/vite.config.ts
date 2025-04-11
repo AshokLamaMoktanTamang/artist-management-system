@@ -9,7 +9,7 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/artist-management-system-enduser',
   server: {
-    port: 4200,
+    port: 4100,
     host: 'localhost',
   },
   preview: {

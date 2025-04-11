@@ -11,7 +11,6 @@ import { AuthLayout, FullLayout, StaticLayout } from '@/layouts';
 import { fullLayoutRoutes } from './private.route';
 
 const RouteWrapperComponent = (routeType: RouteType, component: any) => {
-  debugger;
   const ComponentWrapped = component;
 
   if (routeType === RouteType.PRIVATE) {

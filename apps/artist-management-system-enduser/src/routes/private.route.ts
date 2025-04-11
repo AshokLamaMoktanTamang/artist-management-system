@@ -8,7 +8,7 @@ export const fullLayoutRoutes: ChildrenRouteElement[] = [
     path: PRIVATE_ROUTES.home,
     type,
     component: async () => {
-      const { Dashboard } = await import('@/pages/dashboard');
+      const { Dashboard } = await import('@/pages/common');
       return Dashboard;
     },
   },

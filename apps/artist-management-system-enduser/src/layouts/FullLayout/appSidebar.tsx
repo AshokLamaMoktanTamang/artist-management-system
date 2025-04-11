@@ -22,48 +22,60 @@ import {
 import { Link } from 'react-router-dom';
 import { PRIVATE_ROUTES } from '@/utils/constants';
 import useAuth from '@/hooks/useAuth';
+import { USER_ROLE } from '@/types';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
 
-  if (!user) return;
+  const data = React.useMemo(() => {
+    if (!user) return;
 
-  const { full_name, email } = user;
+    const { full_name, email, avatar, role } = user;
+    const navMain = [];
+    const navSecondary = [];
 
-  const data = React.useMemo(
-    () => ({
+    navMain.push({
+      title: 'Dashboard',
+      url: PRIVATE_ROUTES.home,
+      icon: LayoutDashboardIcon,
+    });
+
+    if (role === USER_ROLE.SUPER_ADMIN || role === USER_ROLE.ARTIST_MANAGER) {
+      navMain.push({
+        title: 'Artists',
+        url: PRIVATE_ROUTES.artists,
+        icon: FolderIcon,
+      });
+    }
+
+    if (role === USER_ROLE.SUPER_ADMIN) {
+      navMain.push({
+        title: 'Users',
+        url: PRIVATE_ROUTES.users,
+        icon: UsersIcon,
+      });
+    }
+
+    if (user.role === USER_ROLE.ARTIST_MANAGER) {
+      navSecondary.push({
+        title: 'Bulk Upload',
+        url: PRIVATE_ROUTES.bulkUpload,
+        icon: SettingsIcon,
+      });
+    }
+
+    return {
       user: {
         name: full_name,
-        email: email,
-        avatar: '/avatars/shadcn.jpg',
+        email,
+        avatar,
       },
-      navMain: [
-        {
-          title: 'Dashboard',
-          url: PRIVATE_ROUTES.home,
-          icon: LayoutDashboardIcon,
-        },
-        {
-          title: 'Users',
-          url: PRIVATE_ROUTES.users,
-          icon: UsersIcon,
-        },
-        {
-          title: 'Artists',
-          url: PRIVATE_ROUTES.artists,
-          icon: FolderIcon,
-        },
-      ],
-      navSecondary: [
-        {
-          title: 'Bulk Upload',
-          url: PRIVATE_ROUTES.bulkUpload,
-          icon: SettingsIcon,
-        },
-      ],
-    }),
-    [user]
-  );
+      navMain,
+      navSecondary,
+    };
+  }, [user]);
+
+  if (!user || !data) return;
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
