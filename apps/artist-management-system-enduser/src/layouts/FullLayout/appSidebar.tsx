@@ -21,39 +21,49 @@ import {
 } from '@/components/sidebar';
 import { Link } from 'react-router-dom';
 import { PRIVATE_ROUTES } from '@/utils/constants';
+import useAuth from '@/hooks/useAuth';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const data = {
-    user: {
-      name: 'shadcn',
-      email: 'm@example.com',
-      avatar: '/avatars/shadcn.jpg',
-    },
-    navMain: [
-      {
-        title: 'Dashboard',
-        url: PRIVATE_ROUTES.home,
-        icon: LayoutDashboardIcon,
+  const { user } = useAuth();
+
+  if (!user) return;
+
+  const { full_name, email } = user;
+
+  const data = React.useMemo(
+    () => ({
+      user: {
+        name: full_name,
+        email: email,
+        avatar: '/avatars/shadcn.jpg',
       },
-      {
-        title: 'Users',
-        url: PRIVATE_ROUTES.users,
-        icon: UsersIcon,
-      },
-      {
-        title: 'Artists',
-        url: PRIVATE_ROUTES.artists,
-        icon: FolderIcon,
-      },
-    ],
-    navSecondary: [
-      {
-        title: 'Bulk Upload',
-        url: PRIVATE_ROUTES.bulkUpload,
-        icon: SettingsIcon,
-      },
-    ],
-  };
+      navMain: [
+        {
+          title: 'Dashboard',
+          url: PRIVATE_ROUTES.home,
+          icon: LayoutDashboardIcon,
+        },
+        {
+          title: 'Users',
+          url: PRIVATE_ROUTES.users,
+          icon: UsersIcon,
+        },
+        {
+          title: 'Artists',
+          url: PRIVATE_ROUTES.artists,
+          icon: FolderIcon,
+        },
+      ],
+      navSecondary: [
+        {
+          title: 'Bulk Upload',
+          url: PRIVATE_ROUTES.bulkUpload,
+          icon: SettingsIcon,
+        },
+      ],
+    }),
+    [user]
+  );
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>

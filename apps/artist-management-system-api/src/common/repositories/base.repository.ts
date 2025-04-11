@@ -14,16 +14,28 @@ export class BaseRepository<T extends { id: string }> {
     protected readonly softDelete = false,
     protected readonly indexes: string[] = [],
     protected readonly preSaveHook?: (
-      data: Partial<Omit<T, 'id'>>
-    ) => Promise<Partial<Omit<T, 'id'>>>
+      data: Partial<Omit<T, 'id'>>,
+      action?: 'create' | 'update'
+    ) => Promise<Partial<Omit<T, 'id'>>>,
+    protected readonly virtuals?: (entity: T) => Partial<Record<string, any>>
   ) {
     this.initTable();
   }
 
   private async processBeforeSave(
-    data: Partial<Omit<T, 'id'>>
+    data: Partial<Omit<T, 'id'>>,
+    action?: 'create' | 'update'
   ): Promise<Partial<Omit<T, 'id'>>> {
-    return this.preSaveHook ? await this.preSaveHook(data) : data;
+    return this.preSaveHook ? await this.preSaveHook(data, action) : data;
+  }
+
+  private applyVirtuals(entity: T): T & Record<string, any> {
+    if (!this.virtuals) return entity;
+
+    return {
+      ...entity,
+      ...this.virtuals(entity),
+    };
   }
 
   private async initTable() {
@@ -113,7 +125,9 @@ export class BaseRepository<T extends { id: string }> {
     if (limit) query += ` LIMIT ${limit}`;
     if (offset) query += ` OFFSET ${offset}`;
 
-    return this.db.query(query, values);
+    return (await this.db.query(query, values)).map((row) =>
+      this.applyVirtuals(row)
+    );
   }
 
   async findOne(
@@ -124,7 +138,7 @@ export class BaseRepository<T extends { id: string }> {
     const { clause, values } = this.buildWhereClause(where);
     const query = `SELECT ${selectedFields} FROM ${this.table} ${clause} LIMIT 1`;
     const result = await this.db.query(query, values);
-    return result[0] ?? null;
+    return result[0] ? this.applyVirtuals(result[0]) : null;
   }
 
   async findById(
@@ -135,7 +149,7 @@ export class BaseRepository<T extends { id: string }> {
   }
 
   async create(data: Omit<T, 'id'>): Promise<T> {
-    const processed = await this.processBeforeSave(data);
+    const processed = await this.processBeforeSave(data, 'create');
 
     const keys = Object.keys(processed);
     const values = Object.values(processed);
@@ -148,14 +162,18 @@ export class BaseRepository<T extends { id: string }> {
   }
 
   async updateById(id: string, unprocessedUpdates: Partial<T>): Promise<T> {
-    const updates = await this.processBeforeSave(unprocessedUpdates);
+    const row = await this.findById(id);
+
+    if (!row) throw new NotFoundException('Data not found');
+
+    const updates = await this.processBeforeSave(unprocessedUpdates, 'update');
 
     const keys = Object.keys(updates);
     const values = Object.values(updates);
     const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ');
     const query = `UPDATE ${this.table} SET ${setClause} WHERE id = $1 RETURNING *`;
     const result = await this.db.query(query, [id, ...values]);
-    return result[0];
+    return this.applyVirtuals(result[0]);
   }
 
   async deleteById(id: string): Promise<T> {
@@ -166,12 +184,12 @@ export class BaseRepository<T extends { id: string }> {
     if (this.softDelete) {
       const query = `UPDATE ${this.table} SET deleted = true, deleted_at = NOW() WHERE id = $1 RETURNING *`;
       const result = await this.db.query(query, [id]);
-      return result[0];
+      return this.applyVirtuals(result[0]);
     }
 
     const query = `DELETE FROM ${this.table} WHERE id = $1 RETURNING *`;
     const result = await this.db.query(query, [id]);
-    return result[0];
+    return this.applyVirtuals(result[0]);
   }
 
   async count(where: Partial<T> = {}): Promise<number> {

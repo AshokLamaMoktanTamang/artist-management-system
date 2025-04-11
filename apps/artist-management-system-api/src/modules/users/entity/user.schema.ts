@@ -10,6 +10,7 @@ export const userSchema = {
   role: 'TEXT NOT NULL',
   deleted: 'BOOLEAN DEFAULT FALSE',
   deleted_at: 'TIMESTAMP',
+  avatar: 'TEXT',
 };
 
 export const userIndexes = [

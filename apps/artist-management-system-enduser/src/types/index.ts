@@ -16,3 +16,9 @@ export enum USER_ROLE {
   ARTIST_MANAGER = 'ARTIST_MANAGER',
   ARTIST = 'ARTIST',
 }
+
+export enum USER_GENDER {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}

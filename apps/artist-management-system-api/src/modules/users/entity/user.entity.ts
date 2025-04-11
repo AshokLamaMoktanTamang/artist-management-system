@@ -10,6 +10,7 @@ export interface UserEntity {
   dob: Date;
   gender: USER_GENDER;
   role: USER_ROLE;
+  avatar?: string;
 }
 
 export interface User extends BaseEntity, UserEntity {}

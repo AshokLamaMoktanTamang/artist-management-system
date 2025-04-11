@@ -11,6 +11,7 @@ import { AuthLayout, FullLayout, StaticLayout } from '@/layouts';
 import { fullLayoutRoutes } from './private.route';
 
 const RouteWrapperComponent = (routeType: RouteType, component: any) => {
+  debugger;
   const ComponentWrapped = component;
 
   if (routeType === RouteType.PRIVATE) {
@@ -31,7 +32,6 @@ const RouteWrapperComponent = (routeType: RouteType, component: any) => {
 const token = getItem<string>('token');
 
 const ChildrenMapper = (
-  routeType: RouteType,
   routes: ChildrenRouteElement[]
 ): RouteObject[] | undefined =>
   routes.map((item) => ({
@@ -39,9 +39,22 @@ const ChildrenMapper = (
     lazy: async () => {
       const ImportComponent = await item.component();
       return {
-        Component: () => RouteWrapperComponent(routeType, ImportComponent),
+        Component: () => RouteWrapperComponent(item.type, ImportComponent),
       };
     },
+    ...(item?.children && {
+      children: item.children?.map((child: any) => {
+        return {
+          path: child?.path,
+          lazy: async () => {
+            const ImportComponent = await child.component()
+            return {
+              Component: ImportComponent,
+            }
+          },
+        }
+      }),
+    }),
   }));
 
 const Routes = createBrowserRouter([
@@ -62,12 +75,12 @@ const Routes = createBrowserRouter([
   {
     element: <AuthLayout />,
     errorElement: <ErrorBoundary homeRoutePath="home" />,
-    children: ChildrenMapper(RouteType.PUBLIC, authLayoutRoutes),
+    children: ChildrenMapper(authLayoutRoutes),
   },
   {
     element: <StaticLayout />,
     errorElement: <ErrorBoundary homeRoutePath="home" />,
-    children: ChildrenMapper(RouteType.PUBLIC, staticLayoutRoutes),
+    children: ChildrenMapper(staticLayoutRoutes),
   },
   {
     element: <FullLayout />,
@@ -76,7 +89,7 @@ const Routes = createBrowserRouter([
         <ErrorBoundary homeRoutePath="home" />
       </FullLayout>
     ),
-    children: ChildrenMapper(RouteType.PRIVATE, fullLayoutRoutes),
+    children: ChildrenMapper(fullLayoutRoutes),
   },
 ]);
 

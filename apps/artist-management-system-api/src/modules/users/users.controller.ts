@@ -8,6 +8,10 @@ export class UsersController {
 
   @Get('whoami')
   async whoAmI(@ActiveUser('id') userId: string) {
-    return this.usersService.findById(userId, { password: 0 });
+    return this.usersService.findById(userId, {
+      password: 0,
+      deleted: 0,
+      deleted_at: 0,
+    });
   }
 }
