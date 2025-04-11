@@ -17,7 +17,10 @@ export class UsersRepository extends BaseRepository<User> {
       userIndexes,
       async (data, action) => {
         if (action === 'create' && data.email) {
-          const md5 = crypto.createHash('md5').update(data.email).digest('hex');
+          const md5 = crypto
+            .createHash('md5')
+            .update(JSON.stringify({ email: data.email, role: data.role }))
+            .digest('hex');
 
           data.avatar = `https://gravatar.com/avatar/${md5}?s=200&d=retro`;
         }
