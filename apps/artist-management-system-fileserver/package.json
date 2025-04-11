@@ -1,0 +1,65 @@
+{
+  "name": "@artist-management-system/artist-management-system-fileserver",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "apps/artist-management-system-fileserver/dist",
+          "format": [
+            "cjs"
+          ],
+          "bundle": false,
+          "main": "apps/artist-management-system-fileserver/src/main.ts",
+          "tsConfig": "apps/artist-management-system-fileserver/tsconfig.app.json",
+          "assets": [
+            "apps/artist-management-system-fileserver/src/assets"
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@artist-management-system/artist-management-system-fileserver:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@artist-management-system/artist-management-system-fileserver:build:development"
+          },
+          "production": {
+            "buildTarget": "@artist-management-system/artist-management-system-fileserver:build:production"
+          }
+        }
+      }
+    }
+  }
+}
