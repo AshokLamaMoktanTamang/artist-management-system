@@ -61,12 +61,12 @@ export class AlbumService extends AlbumRepository {
       Math.ceil(totalAlbums / limit),
       page
     );
-    const paginatedChallengeResponse = new PaginationResponseDto(
+    const paginatedAlbumResponse = new PaginationResponseDto(
       albums,
       pagination
     );
 
-    return paginatedChallengeResponse;
+    return paginatedAlbumResponse;
   }
 
   async deleteAlbum(albumId: string, userId: string) {

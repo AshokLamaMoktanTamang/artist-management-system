@@ -12,6 +12,17 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
+export type SignupPayload = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  phone: string;
+  dob: Date;
+  role: USER_ROLE;
+  gender: USER_GENDER;
+};
+
 export type UserDetail = {
   id: string;
   first_name: string;

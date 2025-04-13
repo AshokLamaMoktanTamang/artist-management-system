@@ -1,14 +1,14 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { DatabaseService } from '@/modules/database/database.service';
-import { QueryOptions } from './type';
+import { ConditionValue, QueryOptions } from './type';
 
 @Injectable()
 export class BaseRepository<T extends { id: string }> {
   private readonly logger = new Logger(BaseRepository.name);
 
   constructor(
-    private readonly db: DatabaseService,
+    protected readonly db: DatabaseService,
     private readonly table: string,
     private readonly schema: Record<string, string>,
     private readonly softDelete = false,
@@ -74,20 +74,31 @@ export class BaseRepository<T extends { id: string }> {
   }
 
   private buildWhereClause(
-    where: Partial<T>,
+    where: Partial<Record<string, ConditionValue>>,
     startIndex = 1
   ): { clause: string; values: any[] } {
-    const keys = Object.keys(where || {});
-    if (this.softDelete && !('deleted' in where)) {
-      keys.push('deleted');
-      where = { ...where, deleted: false };
+    const conditions: string[] = [];
+    const values: any[] = [];
+    let paramIndex = startIndex;
+  
+    const baseWhere = this.softDelete
+      ? { ...where, ...(where?.deleted === undefined ? { deleted: false } : {}) }
+      : where;
+  
+    for (const [key, value] of Object.entries(baseWhere)) {
+      if (value && typeof value === 'object' && '$ne' in value) {
+        conditions.push(`"${key}" != $${paramIndex++}`);
+        values.push(value.$ne);
+      } else {
+        conditions.push(`"${key}" = $${paramIndex++}`);
+        values.push(value);
+      }
     }
-
-    const conditions = keys.map((key, i) => `${key} = $${i + startIndex}`);
-    const clause = keys.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const values = Object.values(where || {});
+  
+    const clause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
     return { clause, values };
   }
+  
 
   private buildSelectClause(select?: Partial<Record<keyof T, 0 | 1>>): string {
     if (!select) return '*';

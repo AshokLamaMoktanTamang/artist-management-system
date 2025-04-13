@@ -12,6 +12,14 @@ export const authLayoutRoutes: ChildrenRouteElement[] = [
       return LoginPage;
     },
   },
+  {
+    path: PUBLIC_ROUTES.signUp,
+    type,
+    component: async () => {
+      const { SignupPage } = await import('@/pages/authPages');
+      return SignupPage;
+    },
+  },
 ];
 
 export const staticLayoutRoutes: ChildrenRouteElement[] = [

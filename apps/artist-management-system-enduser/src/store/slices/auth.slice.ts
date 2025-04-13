@@ -1,5 +1,5 @@
 import baseApi from '@/store/baseApi';
-import { LoginPayload, LoginResponse } from '../types';
+import { LoginPayload, LoginResponse, SignupPayload } from '../types';
 
 const authApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,7 +10,14 @@ const authApiSlice = baseApi.injectEndpoints({
         data,
       }),
     }),
+    signup: builder.mutation<void, SignupPayload>({
+      query: (data) => ({
+        url: `auth/signup`,
+        method: 'POST',
+        data,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation } = authApiSlice;
+export const { useLoginMutation, useSignupMutation } = authApiSlice;

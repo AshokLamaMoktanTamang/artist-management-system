@@ -4,28 +4,36 @@ import { Card, CardContent } from '@/components/card';
 import { HookInput } from '@/components/input';
 import { HookForm, HookFormProvider } from '@/components/form';
 import { ComponentProps, FC, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormContext } from 'react-hook-form';
 import PlaceholderImage from '@/assets/images/auth.png';
-import { PUBLIC_ROUTES, SELECT_ROLE_OPTIONS } from '@/utils/constants';
+import {
+  PUBLIC_ROUTES,
+  SELECT_GENDER_OPTIONS,
+  SELECT_ROLE_OPTIONS,
+} from '@/utils/constants';
 import { HookSelect } from '@/components/select';
-import { USER_ROLE } from '@/types';
-import { useLoginMutation } from '@/store/slices/auth.slice';
-import { LoginPayload } from '@/store/types';
-import useAuth from '@/hooks/useAuth';
+import { USER_GENDER, USER_ROLE } from '@/types';
+import { useSignupMutation } from '@/store/slices/auth.slice';
+import { SignupPayload } from '@/store/types';
+import { toastSuccess } from '@shared/utils/toast';
 
-const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
+const SignupFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
+  const navigate = useNavigate();
   const {
     formState: { isDirty },
-  } = useFormContext<LoginPayload>();
+  } = useFormContext<SignupPayload>();
 
-  const { loginHandler } = useAuth();
-  const [handleLogin, { isLoading }] = useLoginMutation();
+  const [signup, { isLoading }] = useSignupMutation();
 
-  const handleSubmit = useCallback(
-    (data: LoginPayload) => handleLogin(data).unwrap().then(loginHandler),
-    []
-  );
+  const handleSubmit = useCallback((data: SignupPayload) => {
+    signup(data)
+      .unwrap()
+      .then(() => {
+        toastSuccess('User Registered', 'User registered sucessfully!');
+        navigate(PUBLIC_ROUTES.login);
+      });
+  }, []);
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...rest}>
@@ -34,18 +42,58 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
           <HookForm className="p-6 md:p-8" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <h1 className="text-2xl font-bold">Create your account</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your account
+                  Sign up to get started
                 </p>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <HookInput
+                  name="first_name"
+                  label="First Name"
+                  required
+                  placeholder="John"
+                />
+                <HookInput
+                  name="last_name"
+                  label="Last Name"
+                  required
+                  placeholder="Doe"
+                />
+              </div>
+
               <HookSelect
                 name="role"
                 required
                 label="I am"
                 options={SELECT_ROLE_OPTIONS}
-                defaultValue={USER_ROLE.SUPER_ADMIN}
+                defaultValue={USER_ROLE.ARTIST}
               />
+
+              <HookSelect
+                name="gender"
+                required
+                label="Gender"
+                options={SELECT_GENDER_OPTIONS}
+                defaultValue={USER_GENDER.MALE}
+              />
+
+              <HookInput
+                name="dob"
+                label="Date of Birth"
+                type="date"
+                required
+              />
+
+              <HookInput
+                name="phone"
+                label="Phone"
+                placeholder="+977-98XXXXXXXX"
+                required
+                type="tel"
+              />
+
               <HookInput
                 name="email"
                 label="Email"
@@ -53,6 +101,7 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
                 required
                 type="email"
               />
+
               <HookInput
                 type="password"
                 required
@@ -60,21 +109,22 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
                 label="Password"
                 placeholder="********"
               />
+
               <Button
                 disabled={!isDirty || isLoading}
                 type="submit"
                 className="w-full"
               >
-                Login
+                Sign Up
               </Button>
 
               <div className="text-center text-sm">
-                Don&apos;t have an account?{' '}
+                Already have an account?{' '}
                 <Link
-                  to={PUBLIC_ROUTES.signUp}
+                  to={PUBLIC_ROUTES.login}
                   className="underline underline-offset-4"
                 >
-                  Sign up
+                  Login
                 </Link>
               </div>
             </div>
@@ -89,7 +139,7 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our{' '}
+        By signing up, you agree to our{' '}
         <Link to={PUBLIC_ROUTES.terms}>Terms of Service</Link> and{' '}
         <Link to={PUBLIC_ROUTES.policy}>Privacy Policy</Link>.
       </div>
@@ -97,10 +147,10 @@ const LoginFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
   );
 };
 
-export const LoginForm: FC<ComponentProps<'div'>> = (props) => {
+export const SignupForm: FC<ComponentProps<'div'>> = (props) => {
   return (
     <HookFormProvider>
-      <LoginFormView {...props} />
+      <SignupFormView {...props} />
     </HookFormProvider>
   );
 };

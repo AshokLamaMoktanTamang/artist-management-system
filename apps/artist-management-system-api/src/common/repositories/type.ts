@@ -5,3 +5,5 @@ export type QueryOptions<T> = {
   orderBy?: keyof T;
   orderDirection?: 'ASC' | 'DESC';
 };
+
+export type ConditionValue = string | number | boolean | null | { $ne?: any };
