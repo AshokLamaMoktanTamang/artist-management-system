@@ -12,6 +12,7 @@ import { AuthGuard } from '@/common/guards/auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { PasetoModule } from '@/modules/paseto/paseto.module';
+import { AlbumModule } from '@/modules/album/album.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PasetoModule } from '@/modules/paseto/paseto.module';
     UsersModule,
     AuthModule,
     PasetoModule,
+    AlbumModule,
   ],
   controllers: [AppController],
   providers: [

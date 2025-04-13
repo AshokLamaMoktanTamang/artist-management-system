@@ -8,16 +8,16 @@ export class BaseRepository<T extends { id: string }> {
   private readonly logger = new Logger(BaseRepository.name);
 
   constructor(
-    protected readonly db: DatabaseService,
-    protected readonly table: string,
-    protected readonly schema: Record<string, string>,
-    protected readonly softDelete = false,
-    protected readonly indexes: string[] = [],
-    protected readonly preSaveHook?: (
+    private readonly db: DatabaseService,
+    private readonly table: string,
+    private readonly schema: Record<string, string>,
+    private readonly softDelete = false,
+    private readonly indexes: string[] = [],
+    private readonly preSaveHook?: (
       data: Partial<Omit<T, 'id'>>,
       action?: 'create' | 'update'
     ) => Promise<Partial<Omit<T, 'id'>>>,
-    protected readonly virtuals?: (entity: T) => Partial<Record<string, any>>
+    private readonly virtuals?: (entity: T) => Partial<Record<string, any>>
   ) {
     this.initTable();
   }

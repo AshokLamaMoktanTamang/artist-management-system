@@ -13,6 +13,7 @@ export default () => {
     PASETO_PRIVATE_KEY: str({ desc: 'Paseto private key is required' }),
     PASETO_TOKEN_ISSUER: str({ default: 'AMS' }),
     PASETO_TOKEN_AUDIENCE: str({ default: 'AMS-Enduser' }),
+    ASSET_BASE_URL: str({ desc: 'Asset base url needed' }),
   });
 
   return {
@@ -34,6 +35,9 @@ export default () => {
       privateKey: env.PASETO_PRIVATE_KEY,
       issuer: env.PASETO_TOKEN_ISSUER,
       audience: env.PASETO_TOKEN_AUDIENCE,
+    },
+    assets: {
+      baseUrl: env.ASSET_BASE_URL,
     },
   };
 };

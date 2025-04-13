@@ -1,3 +1,4 @@
+import cors from 'cors';
 import multer from 'multer';
 import express from 'express';
 
@@ -15,6 +16,24 @@ import { requestLoggerMiddleware } from './middleware/request-log.middleware';
 
   const fileServer = new FileServer();
 
+  const allowedOrigins = env.CORS_ALLOWED_ORIGINS.split(',')
+    .filter((origin) => origin)
+    .map((origin) => origin.trim());
+    
+  app.use(
+    cors({
+      origin(originUrl, callback) {
+        if (
+          !originUrl ||
+          allowedOrigins.some((x) => originUrl.endsWith(x.trim()))
+        ) {
+          callback(null, true);
+        } else {
+          callback(new Error(`${originUrl} not allowed by CORS`));
+        }
+      },
+    })
+  );
   app.use(express.json());
   app.use(requestLoggerMiddleware);
 

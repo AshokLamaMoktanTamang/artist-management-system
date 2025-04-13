@@ -1,12 +1,8 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app/app.module';
 import { ConfigService } from '@nestjs/config';
+import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
+
 import { AllExceptionFilter } from '@/common/filters/exception.filter';
 
 (async () => {
