@@ -1,15 +1,15 @@
-import AddAlbumDialog from '../../components/AddAlbumDialog';
-import AlbumListing from '../../components/AlbumListing';
+import AddMusicDialog from '../../components/AddMusicDialog';
+import MusicListing from '../../components/MusicListing';
 
 const ArtistDashboard = () => {
   return (
     <>
       <div className="flex justify-between">
-        <h2 className="font-medium">Albums</h2>
-        <AddAlbumDialog />
+        <h2 className="font-medium">Musics</h2>
+        <AddMusicDialog />
       </div>
 
-      <AlbumListing />
+      <MusicListing />
     </>
   );
 };

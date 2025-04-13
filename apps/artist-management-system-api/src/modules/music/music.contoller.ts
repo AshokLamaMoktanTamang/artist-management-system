@@ -1,48 +1,48 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { AlbumService } from './album.service';
+import { MusicService } from './music.service';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { USER_ROLE } from '../users/interfaces';
 import { ActiveUser } from '@/common/decorators/active-user.decorator';
-import { CreateAlbumDto, GenerateAlbumPresignedUrlDto } from './dto/album.dto';
+import { CreateMusicDto, GenerateMusicPresignedUrlDto } from './dto/music.dto';
 import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 
-@Controller('album')
+@Controller('music')
 @Roles(USER_ROLE.ARTIST)
-export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+export class MusicController {
+  constructor(private readonly albumService: MusicService) {}
 
   @Post()
-  async createAlbum(
+  async createMusic(
     @ActiveUser('id') user_id: string,
-    @Body() createAlbumDto: CreateAlbumDto
+    @Body() createMusicDto: CreateMusicDto
   ) {
-    return this.albumService.createAlbum({ ...createAlbumDto, user_id });
+    return this.albumService.createMusic({ ...createMusicDto, user_id });
   }
 
   @Post('/presigned-url')
   async generatePresignedData(
     @ActiveUser('id') user_id: string,
-    @Body() presignedData: GenerateAlbumPresignedUrlDto
+    @Body() presignedData: GenerateMusicPresignedUrlDto
   ) {
-    return this.albumService.generatePresignedUrlForAlbumCover({
+    return this.albumService.generatePresignedUrlForMusicCover({
       ...presignedData,
       user_id,
     });
   }
 
   @Get()
-  async getAllAlbums(
+  async getAllMusics(
     @ActiveUser('id') user_id: string,
     @Query() paginationData: PaginationQueryDto
   ) {
-    return this.albumService.getAlbumOfUser(user_id, paginationData);
+    return this.albumService.getMusicOfUser(user_id, paginationData);
   }
 
   @Delete(':id')
-  async deleteAlbum(
+  async deleteMusic(
     @Param('id') id: string,
     @ActiveUser('id') user_id: string,
   ) {
-    return this.albumService.deleteAlbum(id, user_id);
+    return this.albumService.deleteMusic(id, user_id);
   }
 }

@@ -12,7 +12,7 @@ import { AuthGuard } from '@/common/guards/auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { PasetoModule } from '@/modules/paseto/paseto.module';
-import { AlbumModule } from '@/modules/album/album.module';
+import { MusicModule } from '@/modules/music/music.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { AlbumModule } from '@/modules/album/album.module';
     UsersModule,
     AuthModule,
     PasetoModule,
-    AlbumModule,
+    MusicModule,
   ],
   controllers: [AppController],
   providers: [

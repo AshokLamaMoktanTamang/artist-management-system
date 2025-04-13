@@ -1,7 +1,7 @@
 import { BaseEntity } from '@/common/entity/base.entity';
 import { TimeStampEntity } from '@/common/entity/timeStamp.entity';
 
-export interface AlbumEntity {
+export interface MusicEntity {
   title: string;
   release_date?: Date;
   genre?: string;
@@ -10,6 +10,6 @@ export interface AlbumEntity {
   cover?: string;
 }
 
-export interface Album extends BaseEntity, AlbumEntity, TimeStampEntity {}
+export interface Music extends BaseEntity, MusicEntity, TimeStampEntity {}
 
-export const albumTable = 'album';
+export const albumTable = 'music';

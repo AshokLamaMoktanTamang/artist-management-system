@@ -13,37 +13,37 @@ import { Dialog, DialogContent, DialogFooter } from '@/components/dialog';
 
 import { useState } from 'react';
 import {
-  useDeleteAlbumMutation,
-  useFetchAlbumsQuery,
-} from '@/store/slices/album.slice';
+  useDeleteMusicMutation,
+  useFetchMusicsQuery,
+} from '@/store/slices/music.slice';
 import { cn } from '@/utils/cn';
 import { config } from '@/config';
-import { Album } from '@/store/types';
+import { Music } from '@/store/types';
 import { toastSuccess } from '@shared/utils/toast';
 
-const AlbumListing = () => {
+const MusicListing = () => {
   const limit = 10;
 
   const [page, setPage] = useState(1);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+  const [selectedMusic, setSelectedMusic] = useState<Music | null>(null);
 
-  const { data, isLoading } = useFetchAlbumsQuery({ limit, page });
-  const [deleteAlbum, { isLoading: deleting }] = useDeleteAlbumMutation();
+  const { data, isLoading } = useFetchMusicsQuery({ limit, page });
+  const [deleteMusic, { isLoading: deleting }] = useDeleteMusicMutation();
 
   const albums = data?.data || [];
   const pagination = data?.pagination;
 
   const handleDelete = async () => {
-    if (!selectedAlbum) return;
+    if (!selectedMusic) return;
 
-    deleteAlbum({ id: selectedAlbum.id })
+    deleteMusic({ id: selectedMusic.id })
       .unwrap()
       .then(() => {
         toastSuccess(
-          'Album deleted',
-          `Album "${selectedAlbum.title}" was deleted.`
+          'Music deleted',
+          `Music "${selectedMusic.title}" was deleted.`
         );
         setShowDeleteDialog(false);
       });
@@ -109,7 +109,7 @@ const AlbumListing = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSelectedAlbum(album);
+                        setSelectedMusic(album);
                         setShowEditDialog(true);
                       }}
                     >
@@ -119,7 +119,7 @@ const AlbumListing = () => {
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        setSelectedAlbum(album);
+                        setSelectedMusic(album);
                         setShowDeleteDialog(true);
                       }}
                       disabled={deleting}
@@ -162,7 +162,7 @@ const AlbumListing = () => {
         <DialogContent>
           <p className="text-sm text-muted-foreground">
             Are you sure you want to delete{' '}
-            <strong>{selectedAlbum?.title}</strong>?
+            <strong>{selectedMusic?.title}</strong>?
           </p>
           <DialogFooter>
             <Button
@@ -180,7 +180,7 @@ const AlbumListing = () => {
 
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
-          <h2 className="text-lg font-semibold mb-2">Edit Album</h2>
+          <h2 className="text-lg font-semibold mb-2">Edit Music</h2>
           <p className="text-muted-foreground text-sm">
             (Form goes here — you can use a separate component or form dialog.)
           </p>
@@ -196,4 +196,4 @@ const AlbumListing = () => {
   );
 };
 
-export default AlbumListing;
+export default MusicListing;

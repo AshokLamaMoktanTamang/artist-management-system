@@ -2,7 +2,6 @@ import { Button } from '@/components/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -11,22 +10,22 @@ import { HookFileUploader } from '@/components/fileUploader';
 import { HookForm, HookFormProvider } from '@/components/form';
 import { HookInput } from '@/components/input';
 import {
-  useAddAlbumMutation,
-  useAlbumPresignedUrlMutation,
-} from '@/store/slices/album.slice';
-import { IAddAlbumPayload } from '@/store/types';
+  useAddMusicMutation,
+  useMusicPresignedUrlMutation,
+} from '@/store/slices/music.slice';
+import { IAddMusicPayload } from '@/store/types';
 import { Trigger } from '@radix-ui/react-dialog';
 import { PlusIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-const AddAlbumDialogView = () => {
+const AddMusicDialogView = () => {
   const triggerRef = useRef<typeof Trigger>(null);
-  const { setValue } = useFormContext<IAddAlbumPayload>();
+  const { setValue } = useFormContext<IAddMusicPayload>();
 
-  const [uploadAlbum, { isLoading: albumLoading }] = useAddAlbumMutation();
+  const [uploadMusic, { isLoading: albumLoading }] = useAddMusicMutation();
   const [uploadCover, { isLoading: coverLoading }] =
-    useAlbumPresignedUrlMutation();
+    useMusicPresignedUrlMutation();
 
   const handlCoverChange = (file?: File) => {
     if (!file) {
@@ -39,8 +38,8 @@ const AddAlbumDialogView = () => {
       .then((data) => setValue('cover', data as any));
   };
 
-  const handleAddAlbum = (data: IAddAlbumPayload) => {
-    uploadAlbum(data)
+  const handleAddMusic = (data: IAddMusicPayload) => {
+    uploadMusic(data)
       .unwrap()
       .then(() => {
         (triggerRef.current as any)?.click();
@@ -52,23 +51,20 @@ const AddAlbumDialogView = () => {
       <Dialog>
         <DialogTrigger ref={triggerRef as any}>
           <Button>
-            <PlusIcon /> Add Album
+            <PlusIcon /> Add Music
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Album</DialogTitle>
-            <DialogDescription>
-              Add album and publish group music at once
-            </DialogDescription>
+            <DialogTitle>Add Music</DialogTitle>
           </DialogHeader>
 
-          <HookForm className="flex flex-col gap-4" onSubmit={handleAddAlbum}>
+          <HookForm className="flex flex-col gap-4" onSubmit={handleAddMusic}>
             <HookInput
               name="title"
-              label="Album Title"
+              label="Music Title"
               required
-              placeholder="Enter the album title"
+              placeholder="Enter the music title"
             />
             <HookInput
               name="genre"
@@ -77,7 +73,7 @@ const AddAlbumDialogView = () => {
               placeholder="Example: Romantic, Metal"
             />
             <HookFileUploader
-              placeholder="Select the album cover"
+              placeholder="Select the music cover"
               name="cover"
               label="Cover Thumbnail"
               accept="image/png,image/jpg,image/jpeg"
@@ -93,12 +89,12 @@ const AddAlbumDialogView = () => {
   );
 };
 
-const AddAlbumDialog = () => {
+const AddMusicDialog = () => {
   return (
     <HookFormProvider>
-      <AddAlbumDialogView />
+      <AddMusicDialogView />
     </HookFormProvider>
   );
 };
 
-export default AddAlbumDialog;
+export default AddMusicDialog;

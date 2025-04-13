@@ -2,19 +2,19 @@ import baseApi from '@/store/baseApi';
 import { axios } from '@shared/index';
 import { toastError } from '@shared/utils/toast';
 import {
-  IAddAlbumPayload,
-  IGetAlbumsPayload,
-  IGetAlbumsResponse,
+  IAddMusicPayload,
+  IGetMusicsPayload,
+  IGetMusicsResponse,
 } from '../types';
 
-const albumApiSlice = baseApi
-  .enhanceEndpoints({ addTagTypes: ['album'] })
+const musicApiSlice = baseApi
+  .enhanceEndpoints({ addTagTypes: ['music'] })
   .injectEndpoints({
     endpoints: (builder) => ({
-      albumPresignedUrl: builder.mutation<{ data: string }, File>({
+      musicPresignedUrl: builder.mutation<{ data: string }, File>({
         queryFn: async (file) => {
           try {
-            const data = await axios.post('album/presigned-url', {
+            const data = await axios.post('music/presigned-url', {
               fileName: file.name,
               fileType: file.type,
             });
@@ -38,35 +38,35 @@ const albumApiSlice = baseApi
           }
         },
       }),
-      addAlbum: builder.mutation<void, IAddAlbumPayload>({
+      addMusic: builder.mutation<void, IAddMusicPayload>({
         query: (data) => ({
-          url: 'album',
+          url: 'music',
           method: 'POST',
           data,
         }),
-        invalidatesTags: ['album'],
+        invalidatesTags: ['music'],
       }),
-      deleteAlbum: builder.mutation<void, { id: string }>({
+      deleteMusic: builder.mutation<void, { id: string }>({
         query: ({ id }) => ({
-          url: `album/${id}`,
+          url: `music/${id}`,
           method: 'DELETE',
         }),
-        invalidatesTags: ['album'],
+        invalidatesTags: ['music'],
       }),
-      fetchAlbums: builder.query<IGetAlbumsResponse, IGetAlbumsPayload>({
+      fetchMusics: builder.query<IGetMusicsResponse, IGetMusicsPayload>({
         query: (params) => ({
-          url: 'album',
+          url: 'music',
           method: 'GET',
           params,
         }),
-        providesTags: ['album'],
+        providesTags: ['music'],
       }),
     }),
   });
 
 export const {
-  useAlbumPresignedUrlMutation,
-  useAddAlbumMutation,
-  useFetchAlbumsQuery,
-  useDeleteAlbumMutation,
-} = albumApiSlice;
+  useMusicPresignedUrlMutation,
+  useAddMusicMutation,
+  useFetchMusicsQuery,
+  useDeleteMusicMutation,
+} = musicApiSlice;

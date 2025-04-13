@@ -41,18 +41,18 @@ export interface IBasePresignedUrlResponse {
   fileKey: string;
 }
 
-export interface IAddAlbumPayload {
+export interface IAddMusicPayload {
   title: string;
   genre: string;
   cover?: string;
 }
 
-export interface IGetAlbumsPayload {
+export interface IGetMusicsPayload {
   page: number;
   limit: number;
 }
 
-export type Album = {
+export type Music = {
   id: string;
   title: string;
   release_date: null | string;
@@ -66,7 +66,7 @@ export type Album = {
   deleted_at: string | null;
 };
 
-export interface IGetAlbumsResponse {
-  data: Array<Album>;
+export interface IGetMusicsResponse {
+  data: Array<Music>;
   pagination: Pagination;
 }

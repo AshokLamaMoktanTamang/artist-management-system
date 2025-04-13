@@ -6,9 +6,9 @@ import {
   IsString,
   ValidateIf,
 } from 'class-validator';
-import { AlbumEntity } from '../entity/album.entity';
+import { MusicEntity } from '../entity/music.entity';
 
-export class CreateAlbumDto implements Omit<AlbumEntity, 'user_id'> {
+export class CreateMusicDto implements Omit<MusicEntity, 'user_id'> {
   @IsString()
   @IsOptional()
   cover?: string;
@@ -30,7 +30,7 @@ export class CreateAlbumDto implements Omit<AlbumEntity, 'user_id'> {
   title!: string;
 }
 
-export class GenerateAlbumPresignedUrlDto {
+export class GenerateMusicPresignedUrlDto {
   @IsString()
   @IsNotEmpty()
   fileName!: string;
