@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { USER_ROLE } from '../users/interfaces';
@@ -23,6 +23,14 @@ export class AlbumController {
     @ActiveUser('id') user_id: string,
     @Body() presignedData: GenerateAlbumPresignedUrlDto
   ) {
-    return this.albumService.generatePresignedUrlForAlbumCover({ ...presignedData, user_id });
+    return this.albumService.generatePresignedUrlForAlbumCover({
+      ...presignedData,
+      user_id,
+    });
+  }
+
+  @Get()
+  async getAllAlbums(@ActiveUser('id') user_id: string) {
+    return this.albumService.getAlbumOfUser(user_id);
   }
 }

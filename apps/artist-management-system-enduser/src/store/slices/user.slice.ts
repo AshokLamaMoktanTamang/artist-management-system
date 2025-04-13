@@ -1,7 +1,7 @@
 import baseApi from '@/store/baseApi';
 import { UserDetail } from '../types';
 
-const authApiSlice = baseApi.injectEndpoints({
+const userApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     whoAmI: builder.query<UserDetail, void>({
       query: () => ({
@@ -12,4 +12,4 @@ const authApiSlice = baseApi.injectEndpoints({
   }),
 });
 
-export const { useWhoAmIQuery } = authApiSlice;
+export const { useWhoAmIQuery } = userApiSlice;

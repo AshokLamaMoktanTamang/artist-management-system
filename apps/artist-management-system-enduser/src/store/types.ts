@@ -20,6 +20,17 @@ export type UserDetail = {
   dob: string;
   gender: USER_GENDER;
   role: USER_ROLE;
-  full_name: string
-  avatar?: string
+  full_name: string;
+  avatar?: string;
 };
+
+export interface IBasePresignedUrlResponse {
+  url: string;
+  fileKey: string;
+}
+
+export interface IAddAlbumPayload {
+  title: string;
+  genre: string;
+  cover?: string;
+}

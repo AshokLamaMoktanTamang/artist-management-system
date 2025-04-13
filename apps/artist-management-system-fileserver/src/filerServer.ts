@@ -56,8 +56,9 @@ export class FileServer {
     }expires=${expirationTimestamp}&fileType=${fileType}&maxSize=${maxSize}&signature=${signature}`;
 
     const publicUrl = `${this.publicUrlBase}${presignedUrl}`;
+    const filePath = bucketName ? `${bucketName}/${fileKey}` : fileKey;
 
-    return { url: publicUrl, fileKey };
+    return { url: publicUrl, fileKey: filePath };
   }
 
   validatePresignedUrl(url: string): {

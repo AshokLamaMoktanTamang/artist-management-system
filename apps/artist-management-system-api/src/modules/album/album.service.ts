@@ -34,4 +34,10 @@ export class AlbumService extends AlbumRepository {
 
     return presignedData;
   }
+
+  async getAlbumOfUser(user_id: string) {
+    const albums = await this.find({ where: { user_id } });
+
+    return albums;
+  }
 }
