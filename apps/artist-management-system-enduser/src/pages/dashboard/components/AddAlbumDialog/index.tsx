@@ -36,7 +36,7 @@ const AddAlbumDialogView = () => {
 
     uploadCover(file)
       .unwrap()
-      .then(({ data }) => setValue('cover', data));
+      .then((data) => setValue('cover', data as any));
   };
 
   const handleAddAlbum = (data: IAddAlbumPayload) => {

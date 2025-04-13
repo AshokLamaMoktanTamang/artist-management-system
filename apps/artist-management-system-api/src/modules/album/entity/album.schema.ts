@@ -4,7 +4,7 @@ export const albumSchema = {
   release_date: 'DATE',
   genre: 'TEXT NOT NULL',
   user_id: 'UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE',
-  is_draft: 'BOOLEAN DEFAULT FALSE',
+  is_draft: 'BOOLEAN DEFAULT TRUE',
   cover: 'TEXT',
   created_at: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
   updated_at: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',

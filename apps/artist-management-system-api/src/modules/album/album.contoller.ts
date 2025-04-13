@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { USER_ROLE } from '../users/interfaces';
 import { ActiveUser } from '@/common/decorators/active-user.decorator';
 import { CreateAlbumDto, GenerateAlbumPresignedUrlDto } from './dto/album.dto';
+import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 
 @Controller('album')
 @Roles(USER_ROLE.ARTIST)
@@ -30,7 +31,18 @@ export class AlbumController {
   }
 
   @Get()
-  async getAllAlbums(@ActiveUser('id') user_id: string) {
-    return this.albumService.getAlbumOfUser(user_id);
+  async getAllAlbums(
+    @ActiveUser('id') user_id: string,
+    @Query() paginationData: PaginationQueryDto
+  ) {
+    return this.albumService.getAlbumOfUser(user_id, paginationData);
+  }
+
+  @Delete(':id')
+  async deleteAlbum(
+    @Param('id') id: string,
+    @ActiveUser('id') user_id: string,
+  ) {
+    return this.albumService.deleteAlbum(id, user_id);
   }
 }
