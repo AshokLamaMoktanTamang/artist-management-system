@@ -1,8 +1,8 @@
 import useAuth from '@/hooks/useAuth';
 import { USER_ROLE } from '@/types';
 import ArtistDashboard from './common/ArtistDashboard';
-import ManagerDashboard from './common/ManagerDashboard';
-import AdminDashboard from './common/AdminDashboard';
+import { Navigate } from 'react-router-dom';
+import { PRIVATE_ROUTES } from '@/utils/constants';
 
 export const Dashboard = () => {
   const { user, isUserLoading } = useAuth();
@@ -11,15 +11,9 @@ export const Dashboard = () => {
 
   const { role } = user;
 
-  switch (role) {
-    case USER_ROLE.ARTIST:
-      return <ArtistDashboard />;
-    case USER_ROLE.ARTIST_MANAGER:
-      return <ManagerDashboard />;
-    case USER_ROLE.SUPER_ADMIN:
-      return <AdminDashboard />;
-
-    default:
-      return <>Dashboard not found</>;
+  if (role !== USER_ROLE.ARTIST) {
+    return <Navigate to={PRIVATE_ROUTES.artists} replace />;
   }
+
+  return <ArtistDashboard />;
 };

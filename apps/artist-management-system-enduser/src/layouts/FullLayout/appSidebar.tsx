@@ -34,11 +34,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navMain = [];
     const navSecondary = [];
 
-    navMain.push({
-      title: 'Dashboard',
-      url: PRIVATE_ROUTES.home,
-      icon: LayoutDashboardIcon,
-    });
+    if (role === USER_ROLE.ARTIST) {
+      navMain.push({
+        title: 'Dashboard',
+        url: PRIVATE_ROUTES.home,
+        icon: LayoutDashboardIcon,
+      });
+    }
 
     if (role === USER_ROLE.SUPER_ADMIN || role === USER_ROLE.ARTIST_MANAGER) {
       navMain.push({
