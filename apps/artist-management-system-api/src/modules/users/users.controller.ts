@@ -1,9 +1,12 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Delete,
   Get,
   Param,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -11,6 +14,7 @@ import { ActiveUser } from '@/common/decorators/active-user.decorator';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { USER_ROLE } from './interfaces';
 import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
+import { SignupDto } from '../auth/dto/auth.dto';
 
 @Controller('user')
 export class UsersController {
@@ -44,5 +48,44 @@ export class UsersController {
       throw new BadRequestException('Unable to delete User');
 
     return this.usersService.deleteById(userId);
+  }
+
+  @Roles(USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER)
+  @Post('')
+  async addUser(
+    @ActiveUser('role') userRole: USER_ROLE,
+    @Body() createUserDto: SignupDto
+  ) {
+    const { role } = createUserDto;
+
+    if (
+      (userRole === USER_ROLE.ARTIST_MANAGER && role !== USER_ROLE.ARTIST) ||
+      userRole === USER_ROLE.ARTIST
+    )
+      throw new BadRequestException(
+        'User not allowed to create user of this role'
+      );
+
+    return this.usersService.addUser(createUserDto);
+  }
+
+  @Roles(USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER)
+  @Patch(':userId')
+  async updateUser(
+    @ActiveUser('role') userRole: USER_ROLE,
+    @Body() updateUserDto: Partial<Omit<SignupDto, 'password'>>,
+    @Param('userId') userId: string
+  ) {
+    const { role } = updateUserDto;
+
+    if (
+      (userRole === USER_ROLE.ARTIST_MANAGER && role !== USER_ROLE.ARTIST) ||
+      userRole === USER_ROLE.ARTIST
+    )
+      throw new BadRequestException(
+        'User not allowed to update user of this role'
+      );
+
+    return this.usersService.updateUser({ ...updateUserDto, userId });
   }
 }

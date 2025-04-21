@@ -3,6 +3,8 @@ import {
   DeleteUserPayload,
   GetUsersPayload,
   IGeUsersResponse,
+  IUpdateUserPayload,
+  SignupPayload,
   UserDetail,
 } from '../types';
 
@@ -31,8 +33,29 @@ const userApiSlice = baseApi
         }),
         invalidatesTags: ['users'],
       }),
+      addUser: builder.mutation<UserDetail, SignupPayload>({
+        query: (data) => ({
+          url: `user`,
+          method: 'POST',
+          data,
+        }),
+        invalidatesTags: ['users'],
+      }),
+      updateUser: builder.mutation<UserDetail, IUpdateUserPayload>({
+        query: ({ userId, ...data }) => ({
+          url: `user/${userId}`,
+          method: 'PATCH',
+          data,
+        }),
+        invalidatesTags: ['users'],
+      }),
     }),
   });
 
-export const { useWhoAmIQuery, useGetAllUsersQuery, useDeleteUserMutation } =
-  userApiSlice;
+export const {
+  useWhoAmIQuery,
+  useGetAllUsersQuery,
+  useDeleteUserMutation,
+  useAddUserMutation,
+  useUpdateUserMutation,
+} = userApiSlice;

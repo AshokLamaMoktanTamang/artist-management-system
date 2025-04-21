@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -26,13 +25,7 @@ export class AuthService {
   }
 
   async registerUser(data: SignupDto) {
-    const { email, role } = data;
-    const existingUser = await this.usersService.findOne({ email, role });
-
-    if (existingUser)
-      throw new ConflictException('User with role already exist');
-
-    return this.usersService.create(data);
+    return this.usersService.addUser(data);
   }
 
   async login({ email, password, role }: LoginDto) {

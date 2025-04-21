@@ -1,3 +1,4 @@
 import UserListPage from './UserListPage';
+import ArtistListingPage from './ArtistListPage';
 
-export { UserListPage };
+export { UserListPage, ArtistListingPage };

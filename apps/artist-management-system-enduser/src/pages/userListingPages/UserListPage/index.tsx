@@ -19,6 +19,7 @@ import {
 import { UserDetail } from '@/store/types';
 import { toastSuccess } from '@shared/utils/toast';
 import { USER_ROLE } from '@/types';
+import { AddUserDialog } from '../components';
 
 const userTypeMap: Record<USER_ROLE, string> = {
   ARTIST: 'Artist',
@@ -55,6 +56,11 @@ const UserListPage = () => {
 
   return (
     <Card className="p-4">
+      <div className="flex justify-between mb-3">
+        <h2 className="font-medium">Users</h2>
+        <AddUserDialog />
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -100,16 +106,19 @@ const UserListPage = () => {
                     {userTypeMap[user.role]}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        // setShowEditDialog(true); // add edit logic if needed
+                    <AddUserDialog
+                      isEditMode
+                      defaultValue={{
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        dob: user.dob,
+                        email: user.email,
+                        gender: user.gender,
+                        phone: user.phone,
+                        id: user.id,
+                        role: user.role,
                       }}
-                    >
-                      Edit
-                    </Button>
+                    />
                     <Button
                       variant="destructive"
                       size="sm"

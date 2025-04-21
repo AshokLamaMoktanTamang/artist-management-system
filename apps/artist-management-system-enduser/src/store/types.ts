@@ -90,3 +90,7 @@ export interface IUpdateMusicPayload extends Partial<IAddMusicPayload> {
   musicId: string;
   is_draft?: boolean;
 }
+
+export interface IUpdateUserPayload extends Partial<SignupPayload> {
+  userId: string;
+}

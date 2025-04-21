@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 import { PaginationDto } from '@/common/dto/pagination/pagination.dto';
 import { PaginationResponseDto } from '@/common/dto/response/pagination-response.dto';
+import { SignupDto } from '../auth/dto/auth.dto';
+import { IUpdateUser } from './interfaces';
 
 @Injectable()
 export class UsersService extends UsersRepository {
@@ -33,5 +35,25 @@ export class UsersService extends UsersRepository {
     const paginatedUserResponse = new PaginationResponseDto(users, pagination);
 
     return paginatedUserResponse;
+  }
+
+  async addUser(data: SignupDto) {
+    const { email, role } = data;
+    const existingUser = await this.findOne({ email, role });
+
+    if (existingUser)
+      throw new ConflictException('User with role already exist');
+
+    return this.create(data);
+  }
+
+  async updateUser({ userId, ...data }: IUpdateUser) {
+    const { email, role } = data;
+    const existingUser = await this.findOne({ email, role });
+
+    if (existingUser)
+      throw new ConflictException('User with role already exist');
+
+    return this.updateById(userId, data);
   }
 }
