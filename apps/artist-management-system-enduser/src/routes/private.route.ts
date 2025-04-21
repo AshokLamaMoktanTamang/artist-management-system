@@ -36,4 +36,12 @@ export const fullLayoutRoutes: ChildrenRouteElement[] = [
       return ArtistDetailPage;
     },
   },
+  {
+    path: PRIVATE_ROUTES.bulkUpload,
+    type,
+    component: async () => {
+      const { BulkUpload } = await import('@/pages/BulkPages');
+      return BulkUpload;
+    },
+  },
 ];

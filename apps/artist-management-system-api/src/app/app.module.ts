@@ -13,6 +13,9 @@ import { RolesGuard } from '@/common/guards/roles.guard';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { PasetoModule } from '@/modules/paseto/paseto.module';
 import { MusicModule } from '@/modules/music/music.module';
+import { RedisModule } from '@/modules/redis/redis.module';
+import { BullModule } from '@nestjs/bullmq';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,6 +25,16 @@ import { MusicModule } from '@/modules/music/music.module';
     AuthModule,
     PasetoModule,
     MusicModule,
+    RedisModule,
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        connection: {
+          host: config.get<string>('redis.host'),
+          port: config.get<number>('redis.port'),
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [

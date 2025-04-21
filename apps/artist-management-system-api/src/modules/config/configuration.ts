@@ -14,6 +14,9 @@ export default () => {
     PASETO_TOKEN_ISSUER: str({ default: 'AMS' }),
     PASETO_TOKEN_AUDIENCE: str({ default: 'AMS-Enduser' }),
     ASSET_BASE_URL: str({ desc: 'Asset base url needed' }),
+    REDIS_HOST: str({ desc: 'Redis host required' }),
+    REDIS_PORT: num({ default: 6379 }),
+    REDIS_PREFIX: str({ default: 'ams' }),
   });
 
   return {
@@ -38,6 +41,11 @@ export default () => {
     },
     assets: {
       baseUrl: env.ASSET_BASE_URL,
+    },
+    redis: {
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      keyPrefix: env.REDIS_PREFIX,
     },
   };
 };

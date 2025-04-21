@@ -5,6 +5,8 @@ import { PaginationDto } from '@/common/dto/pagination/pagination.dto';
 import { PaginationResponseDto } from '@/common/dto/response/pagination-response.dto';
 import { SignupDto } from '../auth/dto/auth.dto';
 import { IUpdateUser, USER_ROLE } from './interfaces';
+import { firstValueFrom } from 'rxjs';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class UsersService extends UsersRepository {
@@ -55,5 +57,24 @@ export class UsersService extends UsersRepository {
       throw new ConflictException('User with role already exist');
 
     return this.updateById(userId, data);
+  }
+
+  async generatePresignedUrlForMusicCover() {
+    const fileName = randomUUID() + '.xlsx';
+    const baseURL = this.configService.get<string>('assets.baseUrl');
+    const { data: presignedData } = await firstValueFrom(
+      this.httpService.post(
+        `generate-presigned-url`,
+        {
+          fileType: '.xlsx',
+          fileName: fileName,
+          maxSize: 10 * 1024 * 1024,
+          bucketName: `bulk-seed`,
+        },
+        { baseURL }
+      )
+    );
+
+    return presignedData;
   }
 }

@@ -7,6 +7,8 @@ import {
   SignupPayload,
   UserDetail,
 } from '../types';
+import { axios } from '@shared/index';
+import { toastError } from '@shared/utils/toast';
 
 const userApiSlice = baseApi
   .enhanceEndpoints({ addTagTypes: ['users', 'artists'] })
@@ -63,6 +65,37 @@ const userApiSlice = baseApi
         }),
         invalidatesTags: ['users', 'artists'],
       }),
+      getBulkPresignedUrl: builder.mutation<{ data: string }, File>({
+        queryFn: async (file) => {
+          try {
+            const data = await axios.post('user/presigned-url');
+            const { url, fileKey } = data as unknown as {
+              url: string;
+              fileKey: string;
+            };
+
+            const formData = new FormData();
+            formData.append('file', file);
+            await axios.put(url, formData);
+
+            return { data: fileKey } as any;
+          } catch (error) {
+            const err = error as { message: string[] | string };
+            const message = Array.isArray(err?.message)
+              ? err?.message[0]
+              : err?.message;
+            toastError(message);
+            return { data: '' };
+          }
+        },
+      }),
+      initiateBulkUpload: builder.mutation<void, { fileKey: string }>({
+        query: (data) => ({
+          url: `user/bulk-upload/initiate`,
+          method: 'POST',
+          data,
+        }),
+      }),
     }),
   });
 
@@ -74,4 +107,6 @@ export const {
   useUpdateUserMutation,
   useGetAllArtistsQuery,
   useGetUserDetailQuery,
+  useGetBulkPresignedUrlMutation,
+  useInitiateBulkUploadMutation
 } = userApiSlice;

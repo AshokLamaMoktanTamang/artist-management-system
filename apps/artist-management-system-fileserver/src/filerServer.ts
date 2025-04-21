@@ -35,7 +35,7 @@ export class FileServer {
     maxSize: number;
     bucketName?: string;
   }): { fileKey: string; url: string } {
-    const allowedFileTypes = ['image/jpeg', 'image/png'];
+    const allowedFileTypes = ['image/jpeg', 'image/png', '.xlsx'];
     if (!allowedFileTypes.includes(fileType)) {
       throw new Error('Invalid file type');
     }
@@ -118,8 +118,10 @@ export class FileServer {
       const allowedExtensions: Record<string, string> = {
         'image/jpeg': '.jpg',
         'image/png': '.png',
+        '.xlsx': '.xlsx',
       };
 
+      console.log({ fileType, fileExtension });
       if (
         allowedExtensions[fileType] &&
         allowedExtensions[fileType] !== fileExtension

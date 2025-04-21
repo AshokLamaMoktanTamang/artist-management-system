@@ -15,10 +15,16 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { USER_ROLE } from './interfaces';
 import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 import { SignupDto } from '../auth/dto/auth.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BULK_UPLOAD_JOB, USER_QUEUE } from './constants';
+import { Queue } from 'bullmq';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @InjectQueue(USER_QUEUE) private readonly userQueue: Queue
+  ) {}
 
   @Get('whoami')
   async whoAmI(@ActiveUser('id') userId: string) {
@@ -74,7 +80,7 @@ export class UsersController {
     });
   }
 
-  @Roles(USER_ROLE.SUPER_ADMIN)
+  @Roles(USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER)
   @Delete(':userId')
   async deleteUser(
     @ActiveUser('id') adminId: string,
@@ -123,5 +129,17 @@ export class UsersController {
       );
 
     return this.usersService.updateUser({ ...updateUserDto, userId });
+  }
+
+  @Roles(USER_ROLE.ARTIST_MANAGER)
+  @Post('presigned-url')
+  async generatePresignedData() {
+    return this.usersService.generatePresignedUrlForMusicCover();
+  }
+
+  @Roles(USER_ROLE.ARTIST_MANAGER)
+  @Post('bulk-upload/initiate')
+  async initiateBulkUpload(@Body() data: { fileKey: string }) {
+    return this.userQueue.add(BULK_UPLOAD_JOB, data);
   }
 }

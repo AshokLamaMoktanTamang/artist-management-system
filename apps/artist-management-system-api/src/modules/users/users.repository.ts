@@ -5,10 +5,16 @@ import { BaseRepository } from '@/common/repositories/base.repository';
 import { userIndexes, userSchema } from './entity/user.schema';
 import { hashPassword } from '@/utils/bcrypt';
 import * as crypto from 'crypto';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersRepository extends BaseRepository<User> {
-  constructor(@Inject() databaseService: DatabaseService) {
+  constructor(
+    @Inject() databaseService: DatabaseService,
+    protected readonly httpService: HttpService,
+    protected readonly configService: ConfigService
+  ) {
     super(
       databaseService,
       userTable,
