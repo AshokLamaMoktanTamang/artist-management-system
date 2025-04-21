@@ -4,17 +4,17 @@ import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto
 import { PaginationDto } from '@/common/dto/pagination/pagination.dto';
 import { PaginationResponseDto } from '@/common/dto/response/pagination-response.dto';
 import { SignupDto } from '../auth/dto/auth.dto';
-import { IUpdateUser } from './interfaces';
+import { IUpdateUser, USER_ROLE } from './interfaces';
 
 @Injectable()
 export class UsersService extends UsersRepository {
   async findAllUsers(
     userId: string,
-    { limit = 10, page = 1 }: PaginationQueryDto
+    { limit = 10, page = 1, role }: PaginationQueryDto & { role?: USER_ROLE }
   ) {
     page = Math.max(0, page - 1);
 
-    const filter = { id: { $ne: userId } } as any;
+    const filter = { id: { $ne: userId }, ...(role ? { role } : {}) } as any;
 
     const [totalUsers, users] = await Promise.all([
       this.count(filter),

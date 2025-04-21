@@ -9,12 +9,18 @@ import {
 } from '../types';
 
 const userApiSlice = baseApi
-  .enhanceEndpoints({ addTagTypes: ['users'] })
+  .enhanceEndpoints({ addTagTypes: ['users', 'artists'] })
   .injectEndpoints({
     endpoints: (builder) => ({
       whoAmI: builder.query<UserDetail, void>({
         query: () => ({
           url: `user/whoami`,
+          method: 'GET',
+        }),
+      }),
+      getUserDetail: builder.query<UserDetail, { id: string }>({
+        query: ({ id }) => ({
+          url: `user/detail/${id}`,
           method: 'GET',
         }),
       }),
@@ -26,12 +32,20 @@ const userApiSlice = baseApi
         }),
         providesTags: ['users'],
       }),
+      getAllArtists: builder.query<IGeUsersResponse, GetUsersPayload>({
+        query: (params) => ({
+          url: `user/artists`,
+          method: 'GET',
+          params,
+        }),
+        providesTags: ['artists'],
+      }),
       deleteUser: builder.mutation<UserDetail, DeleteUserPayload>({
         query: ({ userId }) => ({
           url: `user/${userId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: ['users', 'artists'],
       }),
       addUser: builder.mutation<UserDetail, SignupPayload>({
         query: (data) => ({
@@ -39,7 +53,7 @@ const userApiSlice = baseApi
           method: 'POST',
           data,
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: ['users', 'artists'],
       }),
       updateUser: builder.mutation<UserDetail, IUpdateUserPayload>({
         query: ({ userId, ...data }) => ({
@@ -47,7 +61,7 @@ const userApiSlice = baseApi
           method: 'PATCH',
           data,
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: ['users', 'artists'],
       }),
     }),
   });
@@ -58,4 +72,6 @@ export const {
   useDeleteUserMutation,
   useAddUserMutation,
   useUpdateUserMutation,
+  useGetAllArtistsQuery,
+  useGetUserDetailQuery,
 } = userApiSlice;

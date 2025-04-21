@@ -51,6 +51,15 @@ export class MusicController {
     return this.musicService.getMusicOfUser(user_id, paginationData);
   }
 
+  @Roles(USER_ROLE.ARTIST_MANAGER, USER_ROLE.SUPER_ADMIN)
+  @Get(':id')
+  async getUsersMusics(
+    @Param('id') user_id: string,
+    @Query() paginationData: PaginationQueryDto
+  ) {
+    return this.musicService.getMusicOfUser(user_id, paginationData);
+  }
+
   @Delete(':id')
   async deleteMusic(
     @Param('id') id: string,

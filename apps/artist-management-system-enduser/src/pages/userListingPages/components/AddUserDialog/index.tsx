@@ -20,11 +20,13 @@ import { IAddUserDialog } from './type';
 import { USER_GENDER, USER_ROLE } from '@/types';
 import { SignupPayload } from '@/store/types';
 import { SELECT_GENDER_OPTIONS, SELECT_ROLE_OPTIONS } from '@/utils/constants';
+import useAuth from '@/hooks/useAuth';
 
 const AddUserDialogView: FC<IAddUserDialog> = ({
   defaultValue,
   isEditMode,
 }) => {
+  const { user } = useAuth();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const { reset } = useFormContext<SignupPayload>();
 
@@ -125,6 +127,7 @@ const AddUserDialogView: FC<IAddUserDialog> = ({
             label="Role"
             options={SELECT_ROLE_OPTIONS}
             defaultValue={USER_ROLE.ARTIST}
+            disabled={user?.role === USER_ROLE.ARTIST_MANAGER}
           />
           <Button disabled={adding || updating}>Save</Button>
         </HookForm>

@@ -12,6 +12,7 @@ export const PRIVATE_ROUTES = {
   home: '/home',
   users: '/users',
   artists: '/artists',
+  artistDetail: '/artists/:artistId',
   bulkUpload: '/bulk-upload',
 };
 

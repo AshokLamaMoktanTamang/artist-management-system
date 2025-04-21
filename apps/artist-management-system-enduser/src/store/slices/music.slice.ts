@@ -70,6 +70,17 @@ const musicApiSlice = baseApi
         }),
         providesTags: ['music'],
       }),
+      fetchMusicsByUser: builder.query<
+        IGetMusicsResponse,
+        IGetMusicsPayload & { id: string }
+      >({
+        query: ({ id, ...params }) => ({
+          url: `music/${id}`,
+          method: 'GET',
+          params,
+        }),
+        providesTags: ['music'],
+      }),
     }),
   });
 
@@ -78,5 +89,6 @@ export const {
   useAddMusicMutation,
   useFetchMusicsQuery,
   useDeleteMusicMutation,
-  useUpdateMusicMutation
+  useUpdateMusicMutation,
+  useFetchMusicsByUserQuery
 } = musicApiSlice;

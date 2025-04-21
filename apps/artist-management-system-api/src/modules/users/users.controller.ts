@@ -29,6 +29,30 @@ export class UsersController {
     });
   }
 
+  @Roles(USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER)
+  @Get('detail/:id')
+  async getUserDetail(
+    @Param('id') userId: string,
+    @ActiveUser('role') userRole: USER_ROLE
+  ) {
+    const data = await this.usersService.findById(userId, {
+      password: 0,
+      deleted: 0,
+      deleted_at: 0,
+    });
+
+    if (
+      (userRole === USER_ROLE.ARTIST_MANAGER &&
+        data?.role !== USER_ROLE.ARTIST) ||
+      userRole === USER_ROLE.ARTIST
+    )
+      throw new BadRequestException(
+        'User not allowed to get detail of this user'
+      );
+
+    return data;
+  }
+
   @Roles(USER_ROLE.SUPER_ADMIN)
   @Get('all')
   async getAllUsers(
@@ -36,6 +60,18 @@ export class UsersController {
     @Query() paginationData: PaginationQueryDto
   ) {
     return this.usersService.findAllUsers(userId, paginationData);
+  }
+
+  @Roles(USER_ROLE.ARTIST_MANAGER, USER_ROLE.SUPER_ADMIN)
+  @Get('artists')
+  async getAllArtists(
+    @ActiveUser('id') userId: string,
+    @Query() paginationData: PaginationQueryDto
+  ) {
+    return this.usersService.findAllUsers(userId, {
+      ...paginationData,
+      role: USER_ROLE.ARTIST,
+    });
   }
 
   @Roles(USER_ROLE.SUPER_ADMIN)

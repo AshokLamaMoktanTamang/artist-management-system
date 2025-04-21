@@ -20,4 +20,20 @@ export const fullLayoutRoutes: ChildrenRouteElement[] = [
       return UserListPage;
     },
   },
+  {
+    path: PRIVATE_ROUTES.artists,
+    type,
+    component: async () => {
+      const { ArtistListingPage } = await import('@/pages/userListingPages');
+      return ArtistListingPage;
+    },
+  },
+  {
+    path: PRIVATE_ROUTES.artistDetail,
+    type,
+    component: async () => {
+      const { ArtistDetailPage } = await import('@/pages/userListingPages');
+      return ArtistDetailPage;
+    },
+  },
 ];
