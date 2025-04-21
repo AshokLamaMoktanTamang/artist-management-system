@@ -1,6 +1,6 @@
 import { BaseRepository } from '@/common/repositories/base.repository';
 import { Inject, Injectable } from '@nestjs/common';
-import { Music, albumTable } from './entity/music.entity';
+import { Music, musicTable } from './entity/music.entity';
 import { DatabaseService } from '../database/database.service';
 import { musicIndexes, musicSchema } from './entity/music.schema';
 import { HttpService } from '@nestjs/axios';
@@ -15,7 +15,7 @@ export class MusicRepository extends BaseRepository<Music> {
   ) {
     super(
       databaseService,
-      albumTable,
+      musicTable,
       musicSchema,
       true,
       musicIndexes,

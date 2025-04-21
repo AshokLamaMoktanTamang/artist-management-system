@@ -7,6 +7,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { MusicEntity } from '../entity/music.entity';
+import { PartialType } from '@nestjs/swagger';
 
 export class CreateMusicDto implements Omit<MusicEntity, 'user_id'> {
   @IsString()
@@ -39,3 +40,5 @@ export class GenerateMusicPresignedUrlDto {
   @IsNotEmpty()
   fileType!: string;
 }
+
+export class UpdateMusicDto extends PartialType(CreateMusicDto) {}

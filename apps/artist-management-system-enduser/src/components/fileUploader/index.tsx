@@ -1,4 +1,4 @@
-import { ChangeEvent, forwardRef, useState } from 'react';
+import { ChangeEvent, forwardRef, useEffect, useState } from 'react';
 import { IFileUploader } from './type';
 import { HookInputBaseProps } from '@/types';
 import { useFormContext } from 'react-hook-form';
@@ -12,7 +12,7 @@ import {
 } from '../form';
 
 const FileUploader = forwardRef<HTMLInputElement, IFileUploader>(
-  ({ onChange, ...rest }, ref) => {
+  ({ onChange, defaultValue, ...rest }, ref) => {
     const [preview, setPreview] = useState<string | null>(null);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +23,12 @@ const FileUploader = forwardRef<HTMLInputElement, IFileUploader>(
       onChange?.(file);
       setPreview(previewUrl);
     };
+
+    useEffect(() => {
+      setPreview(defaultValue as string);
+    }, [defaultValue]);
+
+    console.log(defaultValue);
 
     return (
       <label htmlFor={rest.id} className="block cursor-pointer w-full">
@@ -79,7 +85,13 @@ const HookFileUploader = forwardRef<
         <FormItem>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <FileUploader {...props} {...field} ref={ref} onChange={onChange} />
+            <FileUploader
+              {...props}
+              {...field}
+              ref={ref}
+              onChange={onChange}
+              defaultValue={defaultValue}
+            />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

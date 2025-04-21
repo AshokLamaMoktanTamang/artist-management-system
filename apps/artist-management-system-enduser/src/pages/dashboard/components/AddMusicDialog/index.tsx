@@ -12,18 +12,25 @@ import { HookInput } from '@/components/input';
 import {
   useAddMusicMutation,
   useMusicPresignedUrlMutation,
+  useUpdateMusicMutation,
 } from '@/store/slices/music.slice';
 import { IAddMusicPayload } from '@/store/types';
 import { Trigger } from '@radix-ui/react-dialog';
-import { PlusIcon } from 'lucide-react';
-import { useRef } from 'react';
+import { PencilIcon, PlusIcon } from 'lucide-react';
+import { FC, useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { IAddMusicDialog } from './type';
+import { config } from '@/config';
 
-const AddMusicDialogView = () => {
+const AddMusicDialogView: FC<IAddMusicDialog> = ({
+  defaultValue,
+  isEditMode,
+}) => {
   const triggerRef = useRef<typeof Trigger>(null);
-  const { setValue } = useFormContext<IAddMusicPayload>();
+  const { setValue, reset } = useFormContext<IAddMusicPayload>();
 
-  const [uploadMusic, { isLoading: albumLoading }] = useAddMusicMutation();
+  const [uploadMusic, { isLoading: musicLoading }] = useAddMusicMutation();
+  const [updateMusic, { isLoading: musicUpdating }] = useUpdateMusicMutation();
   const [uploadCover, { isLoading: coverLoading }] =
     useMusicPresignedUrlMutation();
 
@@ -39,20 +46,43 @@ const AddMusicDialogView = () => {
   };
 
   const handleAddMusic = (data: IAddMusicPayload) => {
-    uploadMusic(data)
-      .unwrap()
-      .then(() => {
-        (triggerRef.current as any)?.click();
-      });
+    if (isEditMode) {
+      updateMusic({ ...data, musicId: defaultValue?.id || '' })
+        .unwrap()
+        .then(() => {
+          (triggerRef.current as any)?.click();
+        });
+    } else {
+      uploadMusic(data)
+        .unwrap()
+        .then(() => {
+          (triggerRef.current as any)?.click();
+        });
+    }
   };
+
+  useEffect(() => {
+    if (!isEditMode || !defaultValue) {
+      reset();
+      return;
+    }
+
+    reset(defaultValue as any);
+  }, [defaultValue, isEditMode]);
 
   return (
     <>
       <Dialog>
         <DialogTrigger ref={triggerRef as any}>
-          <Button>
-            <PlusIcon /> Add Music
-          </Button>
+          {isEditMode ? (
+            <Button size={'sm'} variant={'secondary'}>
+              <PencilIcon /> Edit
+            </Button>
+          ) : (
+            <Button>
+              <PlusIcon /> Add Music
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -79,9 +109,16 @@ const AddMusicDialogView = () => {
               accept="image/png,image/jpg,image/jpeg"
               multiple={false}
               onChange={handlCoverChange}
+              defaultValue={
+                isEditMode
+                  ? config.assetBaseUrl + '/' + defaultValue?.cover
+                  : undefined
+              }
             />
 
-            <Button disabled={albumLoading || coverLoading}>Save</Button>
+            <Button disabled={musicLoading || coverLoading || musicUpdating}>
+              Save
+            </Button>
           </HookForm>
         </DialogContent>
       </Dialog>
@@ -89,10 +126,10 @@ const AddMusicDialogView = () => {
   );
 };
 
-const AddMusicDialog = () => {
+const AddMusicDialog: FC<IAddMusicDialog> = (props) => {
   return (
     <HookFormProvider>
-      <AddMusicDialogView />
+      <AddMusicDialogView {...props} />
     </HookFormProvider>
   );
 };

@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MusicRepository } from './music.repository';
-import { ICreateMusic, IGeneratePresigneMusic } from './interfaces';
+import {
+  ICreateMusic,
+  IGeneratePresigneMusic,
+  IUpdateMusic,
+} from './interfaces';
 import { firstValueFrom } from 'rxjs';
 import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 import { PaginationDto } from '@/common/dto/pagination/pagination.dto';
@@ -46,7 +50,7 @@ export class MusicService extends MusicRepository {
 
     const filetrQuery = { user_id };
 
-    const [totalMusics, albums] = await Promise.all([
+    const [totalMusics, musics] = await Promise.all([
       this.count(filetrQuery),
       this.find({
         where: filetrQuery,
@@ -62,22 +66,34 @@ export class MusicService extends MusicRepository {
       page
     );
     const paginatedMusicResponse = new PaginationResponseDto(
-      albums,
+      musics,
       pagination
     );
 
     return paginatedMusicResponse;
   }
 
-  async deleteMusic(albumId: string, userId: string) {
-    const albumDetail = await this.findById(albumId);
+  async deleteMusic(musicId: string, userId: string) {
+    const musicDetail = await this.findById(musicId);
 
-    if (!albumId || albumDetail?.user_id !== userId) {
+    if (!musicId || musicDetail?.user_id !== userId) {
       throw new NotFoundException('Music not found');
     }
 
-    await this.deleteById(albumId);
+    await this.deleteById(musicId);
 
     return 'Music deleted successfully!';
+  }
+
+  async updateMusic({ musicId, userId, ...rest }: IUpdateMusic) {
+    const musicDetail = await this.findById(musicId);
+
+    if (!musicId || musicDetail?.user_id !== userId) {
+      throw new NotFoundException('Music not found');
+    }
+
+    await this.updateById(musicId, rest);
+
+    return 'Music updated successfully!';
   }
 }

@@ -45,6 +45,7 @@ export interface IAddMusicPayload {
   title: string;
   genre: string;
   cover?: string;
+  musicId?: string;
 }
 
 export interface IGetMusicsPayload {
@@ -69,4 +70,23 @@ export type Music = {
 export interface IGetMusicsResponse {
   data: Array<Music>;
   pagination: Pagination;
+}
+
+export type GetUsersPayload = {
+  limit?: number;
+  page?: number;
+};
+
+export interface IGeUsersResponse {
+  data: Array<UserDetail>;
+  pagination: Pagination;
+}
+
+export type DeleteUserPayload = {
+  userId: string;
+};
+
+export interface IUpdateMusicPayload extends Partial<IAddMusicPayload> {
+  musicId: string;
+  is_draft?: boolean;
 }

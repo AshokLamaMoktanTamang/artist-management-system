@@ -1,4 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ActiveUser } from '@/common/decorators/active-user.decorator';
 import { Roles } from '@/common/decorators/roles.decorator';
@@ -25,5 +32,17 @@ export class UsersController {
     @Query() paginationData: PaginationQueryDto
   ) {
     return this.usersService.findAllUsers(userId, paginationData);
+  }
+
+  @Roles(USER_ROLE.SUPER_ADMIN)
+  @Delete(':userId')
+  async deleteUser(
+    @ActiveUser('id') adminId: string,
+    @Param('userId') userId: string
+  ) {
+    if (adminId === userId)
+      throw new BadRequestException('Unable to delete User');
+
+    return this.usersService.deleteById(userId);
   }
 }

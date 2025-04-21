@@ -5,6 +5,7 @@ import {
   IAddMusicPayload,
   IGetMusicsPayload,
   IGetMusicsResponse,
+  IUpdateMusicPayload,
 } from '../types';
 
 const musicApiSlice = baseApi
@@ -46,6 +47,14 @@ const musicApiSlice = baseApi
         }),
         invalidatesTags: ['music'],
       }),
+      updateMusic: builder.mutation<void, IUpdateMusicPayload>({
+        query: ({ musicId, ...data }) => ({
+          url: `music/${musicId}`,
+          method: 'PATCH',
+          data,
+        }),
+        invalidatesTags: ['music'],
+      }),
       deleteMusic: builder.mutation<void, { id: string }>({
         query: ({ id }) => ({
           url: `music/${id}`,
@@ -69,4 +78,5 @@ export const {
   useAddMusicMutation,
   useFetchMusicsQuery,
   useDeleteMusicMutation,
+  useUpdateMusicMutation
 } = musicApiSlice;

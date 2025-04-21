@@ -12,4 +12,4 @@ export interface MusicEntity {
 
 export interface Music extends BaseEntity, MusicEntity, TimeStampEntity {}
 
-export const albumTable = 'music';
+export const musicTable = 'music';

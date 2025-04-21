@@ -15,24 +15,27 @@ import { useState } from 'react';
 import {
   useDeleteMusicMutation,
   useFetchMusicsQuery,
+  useUpdateMusicMutation,
 } from '@/store/slices/music.slice';
 import { cn } from '@/utils/cn';
 import { config } from '@/config';
 import { Music } from '@/store/types';
 import { toastSuccess } from '@shared/utils/toast';
+import AddMusicDialog from '../AddMusicDialog';
 
 const MusicListing = () => {
   const limit = 10;
 
   const [page, setPage] = useState(1);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [selectedMusic, setSelectedMusic] = useState<Music | null>(null);
 
   const { data, isLoading } = useFetchMusicsQuery({ limit, page });
   const [deleteMusic, { isLoading: deleting }] = useDeleteMusicMutation();
+  const [publishMusic, { isLoading: publishing }] = useUpdateMusicMutation();
 
-  const albums = data?.data || [];
+  const musics = data?.data || [];
   const pagination = data?.pagination;
 
   const handleDelete = async () => {
@@ -46,6 +49,20 @@ const MusicListing = () => {
           `Music "${selectedMusic.title}" was deleted.`
         );
         setShowDeleteDialog(false);
+      });
+  };
+
+  const handlePublish = async () => {
+    if (!selectedMusic) return;
+
+    publishMusic({ musicId: selectedMusic.id, is_draft: false })
+      .unwrap()
+      .then(() => {
+        toastSuccess(
+          'Music Published!',
+          `Music "${selectedMusic.title}" was published.`
+        );
+        setShowPublishDialog(false);
       });
   };
 
@@ -74,13 +91,13 @@ const MusicListing = () => {
                   </TableCell>
                 </TableRow>
               ))
-            : albums.map((album) => (
-                <TableRow key={album.id}>
+            : musics.map((music) => (
+                <TableRow key={music.id}>
                   <TableCell>
-                    {album.cover ? (
+                    {music.cover ? (
                       <img
-                        src={`${config.assetBaseUrl}/${album.cover}`}
-                        alt={album.title}
+                        src={`${config.assetBaseUrl}/${music.cover}`}
+                        alt={music.title}
                         className="h-14 w-14 object-cover rounded-md"
                       />
                     ) : (
@@ -89,40 +106,42 @@ const MusicListing = () => {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>{album.title}</TableCell>
-                  <TableCell>{album.genre}</TableCell>
+                  <TableCell>{music.title}</TableCell>
+                  <TableCell>{music.genre}</TableCell>
                   <TableCell>
                     <span
                       className={cn(
                         'text-sm font-medium',
-                        album.is_draft ? 'text-yellow-500' : 'text-green-600'
+                        music.is_draft ? 'text-yellow-500' : 'text-green-600'
                       )}
                     >
-                      {album.is_draft ? 'Draft' : 'Published'}
+                      {music.is_draft ? 'Draft' : 'Published'}
                     </span>
                   </TableCell>
                   <TableCell>
-                    {new Date(album.created_at).toLocaleDateString()}
+                    {new Date(music.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <AddMusicDialog isEditMode defaultValue={music} />
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSelectedMusic(album);
-                        setShowEditDialog(true);
+                        setSelectedMusic(music);
+                        setShowPublishDialog(true);
                       }}
+                      disabled={deleting}
                     >
-                      Edit
+                      Publish
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        setSelectedMusic(album);
+                        setSelectedMusic(music);
                         setShowDeleteDialog(true);
                       }}
-                      disabled={deleting}
+                      disabled={publishing}
                     >
                       Delete
                     </Button>
@@ -178,17 +197,22 @@ const MusicListing = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
         <DialogContent>
-          <h2 className="text-lg font-semibold mb-2">Edit Music</h2>
-          <p className="text-muted-foreground text-sm">
-            (Form goes here — you can use a separate component or form dialog.)
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to publish{' '}
+            <strong>{selectedMusic?.title}</strong>?
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              Close
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
             </Button>
-            <Button>Save Changes</Button>
+            <Button variant="destructive" onClick={handlePublish}>
+              Publish
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

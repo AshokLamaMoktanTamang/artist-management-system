@@ -12,4 +12,12 @@ export const fullLayoutRoutes: ChildrenRouteElement[] = [
       return Dashboard;
     },
   },
+  {
+    path: PRIVATE_ROUTES.users,
+    type,
+    component: async () => {
+      const { UserListPage } = await import('@/pages/userListingPages');
+      return UserListPage;
+    },
+  },
 ];
