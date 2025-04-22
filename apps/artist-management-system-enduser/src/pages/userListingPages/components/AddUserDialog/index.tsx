@@ -113,7 +113,21 @@ const AddUserDialogView: FC<IAddUserDialog> = ({
             required
             type="tel"
           />
-          <HookInput name="dob" label="Date of Birth" type="date" required />
+          <HookInput
+            name="dob"
+            label="Date of Birth"
+            type="date"
+            required
+            max={
+              new Date(
+                new Date().getFullYear() - 18,
+                new Date().getMonth(),
+                new Date().getDate()
+              )
+                .toISOString()
+                .split('T')[0]
+            }
+          />
           <HookSelect
             name="gender"
             required

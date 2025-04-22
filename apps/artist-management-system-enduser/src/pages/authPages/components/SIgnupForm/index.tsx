@@ -84,6 +84,15 @@ const SignupFormView: FC<ComponentProps<'div'>> = ({ className, ...rest }) => {
                 label="Date of Birth"
                 type="date"
                 required
+                max={
+                  new Date(
+                    new Date().getFullYear() - 18,
+                    new Date().getMonth(),
+                    new Date().getDate()
+                  )
+                    .toISOString()
+                    .split('T')[0]
+                }
               />
 
               <HookInput
